@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم تتبع الطلاب | PFE</title>
+    <!-- استدعاء Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- استدعاء أيقونات Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 flex h-screen overflow-hidden">
+
+    <!-- 1. القائمة الجانبية (Sidebar) -->
+    <aside class="w-64 bg-indigo-900 text-white hidden md:flex flex-col shadow-xl">
+        <div class="p-6 text-center border-b border-indigo-800">
+            <h1 class="text-2xl font-bold tracking-wider">MassarDZ</h1>
+            <p class="text-xs text-indigo-300 mt-1">نظام تتبع الطلاب - ابتدائي</p>
+        </div>
+        <nav class="flex-1 p-4 space-y-2 mt-4">
+            <a href="#" class="flex items-center space-x-3 space-x-reverse p-3 bg-indigo-800 rounded-xl transition">
+                <i class="fas fa-home w-5"></i>
+                <span>الرئيسية</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 space-x-reverse p-3 hover:bg-indigo-800 rounded-xl transition">
+                <i class="fas fa-user-graduate w-5"></i>
+                <span>قائمة الطلاب</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 space-x-reverse p-3 hover:bg-indigo-800 rounded-xl transition">
+                <i class="fas fa-calendar-check w-5"></i>
+                <span>غيابات اليوم</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 space-x-reverse p-3 hover:bg-indigo-800 rounded-xl transition">
+                <i class="fas fa-chart-line w-5"></i>
+                <span>التقارير</span>
+            </a>
+        </nav>
+        <div class="p-4 border-t border-indigo-800">
+            <button class="flex items-center space-x-3 space-x-reverse text-red-300 hover:text-red-100 transition">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>تسجيل الخروج</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- 2. المحتوى الرئيسي (Main Content) -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+        
+        <!-- Header -->
+        <header class="bg-white shadow-sm p-4 flex justify-between items-center px-8">
+            <div class="flex items-center bg-gray-100 px-4 py-2 rounded-lg w-96">
+                <i class="fas fa-search text-gray-400"></i>
+                <input type="text" placeholder="بحث عن طالب..." class="bg-transparent border-none focus:outline-none mr-3 text-sm w-full">
+            </div>
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <div class="text-left">
+                    <p class="text-sm font-bold text-gray-700">الأستاذ(ة) المشرف</p>
+                    <p class="text-xs text-gray-500 text-right">مدير النظام</p>
+                </div>
+                <img src="https://ui-avatars.com/api/?name=User&background=6366f1&color=fff" class="w-10 h-10 rounded-full border-2 border-indigo-100">
+            </div>
+        </header>
+
+        <div class="p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">إحصائيات عامة</h2>
+
+            <!-- 3. بطاقات الإحصائيات (Stat Cards) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- الطلاب -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-indigo-500">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium">إجمالي الطلاب</p>
+                            <h3 class="text-3xl font-bold text-gray-800 mt-1">124</h3>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-xl text-indigo-600">
+                            <i class="fas fa-user-graduate text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- الحضور -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-green-500">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium">حاضرون اليوم</p>
+                            <h3 class="text-3xl font-bold text-gray-800 mt-1">118</h3>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-xl text-green-600">
+                            <i class="fas fa-check-circle text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                <!-- الغيابات -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-red-500">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-sm text-gray-500 font-medium">غيابات مسجلة</p>
+                            <h3 class="text-3xl font-bold text-gray-800 mt-1">6</h3>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-xl text-red-600">
+                            <i class="fas fa-exclamation-triangle text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. جدول الطلاب (Students Table) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-6 border-b border-gray-50 flex justify-between items-center">
+                    <h3 class="font-bold text-gray-800 text-lg">آخر نشاطات الطلاب</h3>
+                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700 transition">
+                        <i class="fas fa-plus ml-2"></i> إضافة طالب جديد
+                    </button>
+                </div>
+                <table class="w-full text-right">
+                    <thead class="bg-gray-50 text-gray-600 text-sm">
+                        <tr>
+                            <th class="p-4">اسم الطالب</th>
+                            <th class="p-4">القسم</th>
+                            <th class="p-4 text-center">حالة الحضور</th>
+                            <th class="p-4 text-center">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <!-- صف 1 -->
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="p-4 flex items-center space-x-3 space-x-reverse">
+                                <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs font-bold">ل.س</div>
+                                <span class="font-medium text-gray-700">لبعي سارة</span>
+                            </td>
+                            <td class="p-4 text-sm text-gray-600">السنة الثالثة - أ</td>
+                            <td class="p-4 text-center">
+                                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs">حاضر</span>
+                            </td>
+                            <td class="p-4 text-center text-indigo-600 space-x-3 space-x-reverse text-sm">
+                                <button title="تعديل"><i class="fas fa-edit"></i></button>
+                                <button title="عرض الملف" class="text-gray-400 hover:text-indigo-600"><i class="fas fa-eye"></i></button>
+                            </td>
+                        </tr>
+                        <!-- صف 2 -->
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="p-4 flex items-center space-x-3 space-x-reverse">
+                                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold">خ.ر</div>
+                                <span class="font-medium text-gray-700">خرفي ريم</span>
+                            </td>
+                            <td class="p-4 text-sm text-gray-600">السنة الثالثة - ب</td>
+                            <td class="p-4 text-center">
+                                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs">غائب</span>
+                            </td>
+                            <td class="p-4 text-center text-indigo-600 space-x-3 space-x-reverse text-sm">
+                                <button title="تعديل"><i class="fas fa-edit"></i></button>
+                                <button title="عرض الملف" class="text-gray-400 hover:text-indigo-600"><i class="fas fa-eye"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+<script>
+    // 1. بيانات تجريبية (Mock Data)
+    // في مشروعك الحقيقي، ستقوم بجلب هذه البيانات من PHP أو Firebase
+    let stats = {
+        totalStudents: 124,
+        presentToday: 118,
+        absentToday: 6
+    };
+
+    let students = [
+        { id: 1, name: "لبعي سارة", class: "السنة الثالثة - أ", status: "حاضر", initials: "ل.س", color: "indigo" },
+        { id: 2, name: "خرفي ريم", class: "السنة الثالثة - ب", status: "غائب", initials: "خ.ر", color: "purple" }
+    ];
+
+    // 2. دالة لتحديث أرقام الإحصائيات في الواجهة
+    function updateStats() {
+        // نختار العناصر بناءً على محتواها أو يمكنك إضافة id لها في الـ HTML
+        document.querySelector('h3.text-3xl').innerText = stats.totalStudents;
+    }
+
+    // 3. دالة لإضافة طالب جديد للجدول برمجياً
+    function renderStudents() {
+        const tbody = document.querySelector('tbody');
+        tbody.innerHTML = ""; // مسح الجدول الحالي
+
+        students.forEach(student => {
+            const statusClass = student.status === "حاضر" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700";
+            
+            const row = `
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="p-4 flex items-center space-x-3 space-x-reverse">
+                        <div class="w-8 h-8 rounded-full bg-${student.color}-100 text-${student.color}-600 flex items-center justify-center text-xs font-bold">
+                            ${student.initials}
+                        </div>
+                        <span class="font-medium text-gray-700">${student.name}</span>
+                    </td>
+                    <td class="p-4 text-sm text-gray-600">${student.class}</td>
+                    <td class="p-4 text-center">
+                        <span class="${statusClass} px-3 py-1 rounded-full text-xs">${student.status}</span>
+                    </td>
+                    <td class="p-4 text-center text-indigo-600 space-x-3 space-x-reverse text-sm">
+                        <button onclick="editStudent(${student.id})" title="تعديل"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteStudent(${student.id})" title="حذف" class="text-red-400 hover:text-red-600"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    // 4. وظيفة زر "إضافة طالب جديد"
+    document.querySelector('button.bg-indigo-600').addEventListener('click', () => {
+        const name = prompt("أدخل اسم الطالب الجديد:");
+        if (name) {
+            const newStudent = {
+                id: students.length + 1,
+                name: name,
+                class: "السنة الأولى - أ",
+                status: "حاضر",
+                initials: name.substring(0, 1),
+                color: "blue"
+            };
+            students.push(newStudent);
+            stats.totalStudents++; // زيادة الإحصائيات
+            updateStats();
+            renderStudents();
+        }
+    });
+
+    // 5. وظيفة زر تسجيل الخروج
+    document.querySelector('button.text-red-300').addEventListener('click', () => {
+        if(confirm("هل أنت متأكد من تسجيل الخروج؟")) {
+            alert("تم تسجيل الخروج بنجاح!");
+            // window.location.href = "login.php"; // التوجه لصفحة تسجيل الدخول
+        }
+    });
+
+    // دالة التعديل والحذف (تجريبية)
+    function editStudent(id) {
+        alert("تعديل بيانات الطالب رقم: " + id);
+    }
+
+    function deleteStudent(id) {
+        if(confirm("هل تريد حذف هذا الطالب؟")) {
+            students = students.filter(s => s.id !== id);
+            renderStudents();
+        }
+    }
+
+    // تشغيل الدوال عند تحميل الصفحة
+    window.onload = () => {
+        renderStudents();
+        updateStats();
+    };
+</script>
+</body>
+</html>

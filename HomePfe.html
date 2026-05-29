@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePage</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="HomePfe.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+    <div class="org">
+        <nav>
+        <a href="HomePfe.html" class="logo"></a>
+        <div class="hamburger" id="hamburger">
+    <i class="fa fa-bars" ></i> </div>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li ><a href="#">About</a></li>
+          <li><a href="#">Student/Courses</a></li>
+          <li><a href="#">Contact</a></li>
+          
+          <li><a href="login.php"><i class="fa fa-user" ></i> Log In</a></li>
+          <li id="theme-toggle" style="cursor: pointer; display: flex; align-items: center; margin-left: 15px;">
+            <i class="fas fa-moon" id="theme-icon" style="color: #f5c842; font-size: 1.2rem;"></i>
+        </li>
+        </ul>
+        
+    </nav>
+
+    <div class="Hero-Section">
+
+        <span class="hero-badge">⭐ Welcome to ECOLNA</span>
+        <h1>Learn Smarter,<br><span>Grow Further</span></h1>
+        <p>A modern platform designed for students and teachers to connect, collaborate, and achieve academic excellence together.</p>
+        <div class="btns">
+        <button class="btn" id="btn"><b>Log In  →</b></button>
+        <button class="btn" id="btnn"><b>Discover Courses</b></button>
+        </div>
+    </div>
+</div>
+
+
+    <section class="features-section">
+        <div class="section-header">
+            <h2>Why Choose <span>ECOLNA?</span></h2>
+            <p>Everything you need for a complete learning experience</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-book-open"></i></div>
+                <h3>Rich Course Library</h3>
+                <p>Access hundreds of structured courses taught by certified instructors across all subjects.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                <h3>Expert Teachers</h3>
+                <p>Learn from experienced educators who are passionate about student success and growth.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-certificate"></i></div>
+                <h3>Certified Programs</h3>
+                <p>Earn recognized certificates upon completing your courses and showcase your achievements.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                <h3>Student Community</h3>
+                <p>Join a vibrant community of learners, collaborate on projects, and grow together.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Track Progress</h3>
+                <p>Monitor your learning journey with detailed performance analytics and progress reports.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                <h3>Learn Anywhere</h3>
+                <p>Access your courses from any device, anytime — learning that fits your schedule.</p>
+            </div>
+        </div>
+    </section>
+
+       <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>1,200+</h3>
+                <p>Students</p>
+            </div>
+            <div class="stat-item">
+                <h3>80+</h3>
+                <p>Courses</p>
+            </div>
+            <div class="stat-item">
+                <h3>45+</h3>
+                <p>Teachers</p>
+            </div>
+            <div class="stat-item">
+                <h3>98%</h3>
+                <p>Satisfaction</p>
+            </div>
+        </div>
+    </section>
+
+
+
+    <div class="Description">
+
+    </div>
+
+    </footer>
+    <div class="footer">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <h2>ECOLNA</h2>
+                <p>A dedicated learning platform empowering students across Algeria to reach their full academic potential.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <ol>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Student / Courses</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ol>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ol>
+                    <li><a href="#">Who are we?</a></li>
+                    <li><a href="#">Affiliation / Contact</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">Privacy & Policy</a></li>
+                </ol>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ECOLNA. All rights reserved.</p>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="letters-container" id="lettersContainer"></div>
+
+
+
+
+<script>
+    const letters = ['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','ه','و','ي','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',"0","1","2","3","4","5","6","7","8","9"];
+    const colors  = ['#f5c842','#ef5350','#66bb6a','#7986cb','#29b6f6','#ff7043','#ab47bc'];
+    const container = document.getElementById('lettersContainer');
+
+    function createLetter() {
+        const el = document.createElement('div');
+        el.className = 'letter';
+        el.textContent = letters[Math.floor(Math.random() * letters.length)];
+        const size = Math.random() * 28 + 16;
+        const left = Math.random() * 100;
+        const duration = Math.random() * 12 + 10;
+        const delay = Math.random() * 8;
+        el.style.cssText = `
+            left: ${left}%;
+            font-size: ${size}px;
+            color: ${colors[Math.floor(Math.random() * colors.length)]};
+            animation-duration: ${duration}s;
+            animation-delay: ${delay}s;
+            text-shadow: 0 0 10px currentColor;
+        `;
+        container.appendChild(el);
+        setTimeout(() => el.remove(), (duration + delay) * 1000);
+    }
+
+    for (let i = 0; i < 18; i++) createLetter();
+    setInterval(createLetter, 900);
+</script>
+
+<script>
+    const hamburger = document.getElementById('hamburger');
+    const nav = document.querySelector('nav');
+
+    hamburger.addEventListener('click', () => {
+        // تبديل ظهور القائمة
+        nav.classList.toggle('active');
+
+        // تغيير شكل الأيقونة من قضبان إلى X
+        const icon = hamburger.querySelector('i');
+        icon.classList.toggle('fa-bars');
+        icon.classList.toggle('fa-times');
+    });
+
+    // إغلاق القائمة عند الضغط على أي رابط داخلها
+    document.querySelectorAll('nav ul li a').forEach(link => {
+        link.addEventListener('click', () => {
+            nav.classList.remove('active');
+            const icon = hamburger.querySelector('i');
+            icon.classList.add('fa-bars');
+            icon.classList.remove('fa-times');
+        });
+    });
+</script>
+
+<script>
+    const themeToggle = document.getElementById('theme-toggle');
+
+themeToggle.addEventListener('click', () => {
+    // هذه السطر يقلب ألوان الموقع بالكامل!
+    document.documentElement.style.filter = 
+        document.documentElement.style.filter === 'invert(1) hue-rotate(180deg)' 
+        ? '' 
+        : 'invert(1) hue-rotate(180deg)';
+});
+</script>
+</body>
+</html>

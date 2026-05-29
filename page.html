@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HomePage</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="page.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+
+    <nav>
+        <a href="page.html" class="logo"></a>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li ><a href="#">About</a></li>
+          <li><a href="#">Student/Courses</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Log In</a></li>
+          <li id="id0"><a href="connection.html" class="iccon"><i class="fa fa-user" style="color: #e0d7f0;"></i></a></li>
+        </ul>
+        
+    </nav>
+   <div class="Hero-Section">
+        <span class="hero-badge">⭐ Welcome to ECOLNA</span>
+        <h1>Learn Smarter,<br><span>Grow Further</span></h1>
+        <p>A modern platform designed for students and teachers to connect, collaborate, and achieve academic excellence together.</p>
+        <div class="btns">
+        <button class="btn" id="btn">Log In  →</button>
+        <button class="btn" id="btnn">Discover Courses</button>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+        </footer>
+    <div class="footer">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <h2>ECOLNA</h2>
+                <p>A dedicated learning platform empowering students across Algeria to reach their full academic potential.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <ol>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Student / Courses</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ol>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <ol>
+                    <li><a href="#">Who are we?</a></li>
+                    <li><a href="#">Affiliation / Contact</a></li>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">Privacy & Policy</a></li>
+                </ol>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 ECOLNA. All rights reserved.</p>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="letters-container" id="lettersContainer"></div>
+
+
+
+</body>
+</html>
+<script>
+    const letters = ['أ','ب','ت','ث','ج','ح','خ','د','ذ','ر','ز','س','ش','ص','ض','ط','ظ','ع','غ','ف','ق','ك','ل','م','ن','ه','و','ي','A','B'];
+    const colors  = ['#f5c842','#ef5350','#66bb6a','#7986cb','#29b6f6','#ff7043','#ab47bc'];
+    const container = document.getElementById('lettersContainer');
+
+    function createLetter() {
+        const el = document.createElement('div');
+        el.className = 'letter';
+        el.textContent = letters[Math.floor(Math.random() * letters.length)];
+        const size = Math.random() * 28 + 16;
+        const left = Math.random() * 100;
+        const duration = Math.random() * 12 + 10;
+        const delay = Math.random() * 8;
+        el.style.cssText = `
+            left: ${left}%;
+            font-size: ${size}px;
+            color: ${colors[Math.floor(Math.random() * colors.length)]};
+            animation-duration: ${duration}s;
+            animation-delay: ${delay}s;
+            text-shadow: 0 0 10px currentColor;
+        `;
+        container.appendChild(el);
+        setTimeout(() => el.remove(), (duration + delay) * 1000);
+    }
+
+    for (let i = 0; i < 18; i++) createLetter();
+    setInterval(createLetter, 900);
+</script>
