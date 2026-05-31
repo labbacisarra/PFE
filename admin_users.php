@@ -7,7 +7,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
 
 $success = $error = "";
 
-// ── حذف مستخدم ──
 if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
     if ($id !== $_SESSION['user']['id']) {
@@ -18,7 +17,6 @@ if (isset($_GET['delete'])) {
     }
 }
 
-// ── إضافة مستخدم ──
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add') {
     $first_name = trim($_POST['first_name']);
     $last_name  = trim($_POST['last_name']);
@@ -38,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add')
     }
 }
 
-// ── تعديل مستخدم ──
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit') {
     $id         = (int)$_POST['user_id'];
     $first_name = trim($_POST['first_name']);
@@ -50,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit'
     $success = "✅ User updated successfully.";
 }
 
-// جلب المستخدمين
 $search = trim($_GET['search'] ?? '');
 if ($search) {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE first_name LIKE ? OR last_name LIKE ? OR email LIKE ? ORDER BY id DESC");
@@ -99,7 +95,6 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .badge-parent    { background: #d4edda; color: #155724; }
         .badge-enseignant { background: #cfe2ff; color: #084298; }
 
-        /* Modal */
         .modal-bg {
             display: none; position: fixed; inset: 0;
             background: rgba(0,0,0,0.5); z-index: 200;
@@ -207,7 +202,6 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </table>
     </div>
 
-    <!-- Modal Add -->
     <div class="modal-bg" id="addModal">
         <div class="modal">
             <h3>➕ Add New User</h3>
@@ -245,7 +239,6 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <!-- Modal Edit -->
     <div class="modal-bg" id="editModal">
         <div class="modal">
             <h3>✏️ Edit User</h3>
