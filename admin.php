@@ -64,8 +64,8 @@ $pending        = $pdo->query("SELECT COUNT(*) FROM users WHERE role='parent'")-
 <body>
     <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
     <nav>
-        <a href="HomePfe.html" class="logo"></a>
-        <p style="color:rgb(131,131,131);font-size:10px;">Platforme Scolaire</p>
+        <a href="index.html" class="logo"></a>
+        <p style="color:rgb(131,131,131);font-size:10px;">School Platform</p>
         <ul>
             <div class="admin-name">
                 👤 <?= htmlspecialchars($_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name']) ?>
@@ -75,6 +75,8 @@ $pending        = $pdo->query("SELECT COUNT(*) FROM users WHERE role='parent'")-
             <li><a href="admin_users.php">👥 Users</a></li>
             <li><a href="admin_timetable.php">🕐 Timetable</a></li>
             <li><a href="admin_inscriptions.php">📋 Inscriptions</a></li>
+            <li><a href="admin_statistics.php">📊 Statistics</a></li>
+            <li><a href="admin_analysis.php">🔍 Analysis</a></li>
             <li><a href="login.php" style="color:#ff6b6b;">🚪 Logout</a></li>
         </ul>
     </nav>
@@ -103,7 +105,7 @@ $pending        = $pdo->query("SELECT COUNT(*) FROM users WHERE role='parent'")-
             <div class="stat-card">
                 <i class="fas fa-child"></i>
                 <div class="num"><?= $total_children ?></div>
-                <div class="lbl">Children</div>
+                <div class="lbl">Student </div>
             </div>
             <div class="stat-card">
                 <i class="fas fa-calendar-times"></i>
@@ -127,6 +129,14 @@ $pending        = $pdo->query("SELECT COUNT(*) FROM users WHERE role='parent'")-
                 <i class="fas fa-clipboard-list"></i>
                 <span>Manage Inscriptions</span>
             </a>
+            <a href="admin_statistics.php" class="quick-card">
+                <i class="fas fa-chart-bar"></i>
+                <span>Statistics</span>
+            </a>
+            <a href="admin_analysis.php" class="quick-card">
+                <i class="fas fa-chart-line"></i>
+                <span>Student Analysis</span>
+           </a>
         </div>
     </div>
 
