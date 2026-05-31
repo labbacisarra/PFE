@@ -195,13 +195,13 @@ $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good
 
 <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
 <nav>
-        <a href="HomePfe.html" class="logo"></a>
+        <a href="index.html" class="logo"></a>
     <p style="color:rgb(131,131,131);font-size:10px;">School Platform</p>
     <ul>
         <div class="parent" style="color:#fff;font-size:17px;">
             <?= htmlspecialchars($first_name . ' ' . $last_name) ?>
         </div><br>
-        <p style="color:rgb(131,131,131);font-size:10px;">Suivi Scolaire:</p>
+        <p style="color:rgb(131,131,131);font-size:10px;">Academic Monitoring::</p>
         <li><a href="dashboard.php" style="color:#f5c842;">🏠 Dashboard</a></li>
         <li><a href="grades.php">📊 Grades & Reports</a></li>
         <li><a href="absences.php">📅 Absences</a></li>
