@@ -7,7 +7,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'parent') {
 $parent_id = $_SESSION['user']['id'];
 $success = $error = "";
 
-// ── إضافة ولد ──
+// ── Action Handlers ──
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     if ($_POST['action'] === 'add') {
@@ -19,20 +19,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $niveau            = trim($_POST['niveau']);
 
         if (empty($child_name) || empty($prenom)) {
-            $error = "❌ Veuillez remplir le nom et prénom.";
+            $error = "❌ Please enter both the last name and first name.";
         } else {
             $stmt = $pdo->prepare("INSERT INTO children 
                 (parent_id, child_name, prenom, date_naissance, lieu_naissance, situation_familiale, niveau, classe, status) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending')");
             $stmt->execute([$parent_id, $child_name, $prenom, $date_naissance, $lieu_naissance, $situation, $niveau, $niveau]);
-            $success = "✅ Dossier envoyé! En attente de validation par l'administrateur.";
+            $success = "✅ Dossier submitted successfully! Waiting for administrator validation.";
         }
     }
 
     if ($_POST['action'] === 'delete') {
         $child_id = (int)$_POST['child_id'];
         $pdo->prepare("DELETE FROM children WHERE id = ? AND parent_id = ?")->execute([$child_id, $parent_id]);
-        $success = "✅ Enfant supprimé.";
+        $success = "✅ Child record removed successfully.";
     }
 
     if ($_POST['action'] === 'edit') {
@@ -49,11 +49,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             situation_familiale=?, niveau=?, status='pending'
             WHERE id=? AND parent_id=?")
             ->execute([$child_name, $prenom, $date_naissance, $lieu_naissance, $situation, $niveau, $child_id, $parent_id]);
-        $success = "✅ Dossier mis à jour et renvoyé pour validation.";
+        $success = "✅ Dossier updated and resubmitted for administration review.";
     }
 }
 
-// جلب الأولاد
+// Fetch Children Records
 $stmt = $pdo->prepare("SELECT * FROM children WHERE parent_id = ? ORDER BY id");
 $stmt->execute([$parent_id]);
 $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -63,7 +63,7 @@ $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Children</title>
+    <title>My Children - Ecolna</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="parent.css">
@@ -145,7 +145,7 @@ $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .alert-success { background: rgba(40,167,69,0.15); color: #155724; border: 1px solid rgba(40,167,69,0.3); }
         .alert-error   { background: rgba(220,53,69,0.15); color: #721c24; border: 1px solid rgba(220,53,69,0.3); }
 
-        /* Modal */
+        /* Modal styling */
         .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
         .modal-bg.show { display: flex; }
         .modal { background: #fff; border-radius: 16px; padding: 30px; width: 90%; max-width: 560px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
@@ -157,15 +157,14 @@ $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
     <nav>
-        <a href="HomePfe.html" class="logo"></a>
-        <p style="color:rgb(131,131,131);font-size:10px;">Platforme Scolaire</p>
+        <a href="index.html" class="logo"></a>
+        <p style="color:rgb(131,131,131);font-size:10px;">School Platform</p>
         <ul>
             <div class="parent" style="color:#fff; font-size:17px">
                 <?= htmlspecialchars($_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name']) ?>
             </div><br>
-            <p style="color:rgb(131,131,131);font-size:10px;">Suivi Scolaire:</p>
+            <p style="color:rgb(131,131,131);font-size:10px;">Academic Monitoring::</p>
             <li><a href="dashboard.php">🏠 Dashboard</a></li>
-
             <li><a href="grades.php">📊 Grades & Reports</a></li>
             <li><a href="absences.php">📅 Absences</a></li>
             <li><a href="disciplinary.php">⚠️ Disciplinary Records</a></li>
@@ -178,7 +177,7 @@ $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="container">
         <div class="page-header">
             <h1>👦 My Children</h1>
-            <p>Ajoutez le dossier de votre enfant — l'administrateur le validera.</p>
+            <p>Submit your child's student profile — an administrator will validate it shortly.</p>
         </div>
 
         <?php if ($success): ?>
@@ -188,60 +187,58 @@ $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
-        <!-- فورم إضافة ولد -->
         <div class="add-card">
-            <h3>➕ Ajouter un enfant</h3>
+            <h3>➕ Add a Child</h3>
             <form method="POST" action="children.php">
                 <input type="hidden" name="action" value="add">
                 <div class="form-grid">
                     <div class="form-field">
-                        <label>Nom <span style="color:red">*</span></label>
-                        <input type="text" name="child_name" placeholder="Nom de famille" required>
+                        <label>Last Name <span style="color:red">*</span></label>
+                        <input type="text" name="child_name" placeholder="Family name" required>
                     </div>
                     <div class="form-field">
-                        <label>Prénom <span style="color:red">*</span></label>
-                        <input type="text" name="prenom" placeholder="Prénom" required>
+                        <label>First Name <span style="color:red">*</span></label>
+                        <input type="text" name="prenom" placeholder="First name" required>
                     </div>
                     <div class="form-field">
-                        <label>Date de naissance</label>
+                        <label>Date of Birth</label>
                         <input type="date" name="date_naissance">
                     </div>
                     <div class="form-field">
-                        <label>Lieu de naissance</label>
-                        <input type="text" name="lieu_naissance" placeholder="Ex: Oran">
+                        <label>Place of Birth</label>
+                        <input type="text" name="lieu_naissance" placeholder="e.g., Annaba">
                     </div>
                     <div class="form-field">
-                        <label>Situation familiale</label>
+                        <label>Family Status</label>
                         <select name="situation_familiale">
-                            <option value="famille_complete">Famille complète</option>
-                            <option value="orphelin">Orphelin</option>
-                            <option value="parents_divorces">Parents divorcés</option>
-                            <option value="autre">Autre</option>
+                            <option value="famille_complete">Both Parents</option>
+                            <option value="orphelin">Orphan</option>
+                            <option value="parents_divorces">Divorced Parents</option>
+                            <option value="autre">Other</option>
                         </select>
                     </div>
                     <div class="form-field">
-                        <label>Niveau / Classe</label>
-                        <input type="text" name="niveau" placeholder="Ex: 3AS1">
+                        <label>Grade / Class</label>
+                        <input type="text" name="niveau" placeholder="e.g., 3AS1">
                     </div>
                 </div>
                 <button type="submit" class="btn-add">
-                    <i class="fas fa-paper-plane"></i> Envoyer le dossier
+                    <i class="fas fa-paper-plane"></i> Submit Dossier
                 </button>
             </form>
         </div>
 
-        <!-- قائمة الأولاد -->
         <?php if (empty($children)): ?>
             <div class="empty-msg">
                 <i class="fas fa-child"></i>
-                Aucun enfant ajouté. Remplissez le formulaire ci-dessus!
+                No children added yet. Please complete the registration form above!
             </div>
         <?php else: ?>
-            <h2 style="color:#1a1a2e;margin-bottom:16px;">Dossiers envoyés</h2>
+            <h2 style="color:#1a1a2e;margin-bottom:16px;">Submitted Records</h2>
             <div class="children-grid">
                 <?php foreach ($children as $child):
                     $status = $child['status'] ?? 'pending';
-                    $status_label = $status === 'active' ? '✅ Validé' : ($status === 'rejected' ? '❌ Refusé' : '⏳ En attente');
+                    $status_label = $status === 'active' ? '✅ Approved' : ($status === 'rejected' ? '❌ Rejected' : '⏳ Pending');
                     $status_cls = 'status-' . $status;
                 ?>
                 <div class="child-card <?= $status ?>">
@@ -257,90 +254,93 @@ $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="child-info"><i class="fas fa-map-marker-alt"></i> <?= htmlspecialchars($child['lieu_naissance']) ?></div>
                     <?php endif; ?>
                     <?php if (!empty($child['situation_familiale'])): ?>
-                    <div class="child-info"><i class="fas fa-home"></i> <?= htmlspecialchars(str_replace('_', ' ', $child['situation_familiale'])) ?></div>
+                    <div class="child-info">
+                        <i class="fas fa-home"></i> 
+                        <?= htmlspecialchars(ucwords(str_replace('_', ' ', $child['situation_familiale'] === 'famille_complete' ? 'Both Parents' : ($child['situation_familiale'] === 'parents_divorces' ? 'Divorced Parents' : $child['situation_familiale'])))) ?>
+                    </div>
                     <?php endif; ?>
                     <?php if (!empty($child['niveau'])): ?>
                     <div class="child-info"><i class="fas fa-school"></i> <?= htmlspecialchars($child['niveau']) ?></div>
                     <?php endif; ?>
 
                     <div class="card-actions">
-    <?php if ($status !== 'active'): ?>
-        <button class="btn-edit" onclick="openEdit(
-            <?= $child['id'] ?>,
-            '<?= addslashes($child['child_name']) ?>',
-            '<?= addslashes($child['prenom'] ?? '') ?>',
-            '<?= $child['date_naissance'] ?? '' ?>',
-            '<?= addslashes($child['lieu_naissance'] ?? '') ?>',
-            '<?= $child['situation_familiale'] ?? 'famille_complete' ?>',
-            '<?= addslashes($child['niveau'] ?? '') ?>'
-        )">
-            <i class="fas fa-edit"></i> Modifier
-        </button>
-    <?php else: ?>
-        <div style="
-            flex:1; padding:8px; background:#d4edda; color:#155724;
-            border-radius:8px; font-size:13px; text-align:center;
-            font-family:'Outfit',sans-serif;
-        ">
-            <i class="fas fa-lock"></i> Validé
-        </div>
-    <?php endif; ?>
+                        <?php if ($status !== 'active'): ?>
+                            <button class="btn-edit" onclick="openEdit(
+                                <?= $child['id'] ?>,
+                                '<?= addslashes($child['child_name']) ?>',
+                                '<?= addslashes($child['prenom'] ?? '') ?>',
+                                '<?= $child['date_naissance'] ?? '' ?>',
+                                '<?= addslashes($child['lieu_naissance'] ?? '') ?>',
+                                '<?= $child['situation_familiale'] ?? 'famille_complete' ?>',
+                                '<?= addslashes($child['niveau'] ?? '') ?>'
+                            )">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        <?php else: ?>
+                            <div style="
+                                flex:1; padding:8px; background:#d4edda; color:#155724;
+                                border-radius:8px; font-size:13px; text-align:center;
+                                font-family:'Outfit',sans-serif;
+                            ">
+                                <i class="fas fa-lock"></i> Locked
+                            </div>
+                        <?php endif; ?>
 
-    <form method="POST" onsubmit="return confirm('Supprimer cet enfant?')">
-        <input type="hidden" name="action" value="delete">
-        <input type="hidden" name="child_id" value="<?= $child['id'] ?>">
-        <button type="submit" class="btn-delete">
-            <i class="fas fa-trash"></i> Supprimer
-        </button>
-    </form>
-</div>                </div>
+                        <form method="POST" onsubmit="return confirm('Are you sure you want to delete this child\'s profile?')">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="child_id" value="<?= $child['id'] ?>">
+                            <button type="submit" class="btn-delete">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
     </div>
 
-    <!-- Modal Edit -->
     <div class="modal-bg" id="editModal">
         <div class="modal">
-            <h3>✏️ Modifier le dossier</h3>
+            <h3>✏️ Edit Student Dossier</h3>
             <form method="POST">
                 <input type="hidden" name="action" value="edit">
                 <input type="hidden" name="child_id" id="e_id">
                 <div class="form-grid">
                     <div class="form-field">
-                        <label>Nom</label>
+                        <label>Last Name</label>
                         <input type="text" name="child_name" id="e_nom" required>
                     </div>
                     <div class="form-field">
-                        <label>Prénom</label>
+                        <label>First Name</label>
                         <input type="text" name="prenom" id="e_prenom" required>
                     </div>
                     <div class="form-field">
-                        <label>Date de naissance</label>
+                        <label>Date of Birth</label>
                         <input type="date" name="date_naissance" id="e_date">
                     </div>
                     <div class="form-field">
-                        <label>Lieu de naissance</label>
+                        <label>Place of Birth</label>
                         <input type="text" name="lieu_naissance" id="e_lieu">
                     </div>
                     <div class="form-field">
-                        <label>Situation familiale</label>
+                        <label>Family Status</label>
                         <select name="situation_familiale" id="e_situation">
-                            <option value="famille_complete">Famille complète</option>
-                            <option value="orphelin">Orphelin</option>
-                            <option value="parents_divorces">Parents divorcés</option>
-                            <option value="autre">Autre</option>
+                            <option value="famille_complete">Both Parents</option>
+                            <option value="orphelin">Orphan</option>
+                            <option value="parents_divorces">Divorced Parents</option>
+                            <option value="autre">Other</option>
                         </select>
                     </div>
                     <div class="form-field">
-                        <label>Niveau / Classe</label>
+                        <label>Grade / Class</label>
                         <input type="text" name="niveau" id="e_niveau">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn-cancel" onclick="closeModal()">Annuler</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
                     <button type="submit" class="btn-add" style="margin-top:0;">
-                        <i class="fas fa-save"></i> Enregistrer
+                        <i class="fas fa-save"></i> Save Changes
                     </button>
                 </div>
             </form>
