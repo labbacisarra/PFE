@@ -1,813 +1,372 @@
 <?php
 session_start();
 require 'db.php';
-
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'enseignant') {
-    header("Location: login.php");
-    exit;
+    header('Location: login.php'); exit;
+}
+$teacher_name = $_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name'];
+$success = $error = '';
+
+// ── حفظ الغيابات ──
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
+    $classe   = trim($_POST['classe']);
+    $date_abs = trim($_POST['date_abs']);
+    $statuses = $_POST['status'] ?? [];
+    $motifs   = $_POST['motif']  ?? [];
+
+    foreach ($statuses as $child_id => $status) {
+        $child_id = (int)$child_id;
+        $pdo->prepare("DELETE FROM absences WHERE child_id=? AND date_abs=?")->execute([$child_id, $date_abs]);
+        if ($status === 'absent' || $status === 'justified') {
+            $justifie = $status === 'justified' ? 1 : 0;
+            $motif    = trim($motifs[$child_id] ?? '');
+            $pdo->prepare("INSERT INTO absences (child_id, date_abs, motif, justifie) VALUES (?,?,?,?)")
+                ->execute([$child_id, $date_abs, $motif, $justifie]);
+        }
+    }
+    $success = '✅ Attendance saved!';
 }
 
-$teacher_name = $_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name'];
+// ── الأقسام ──
+$classes = $pdo->query("SELECT DISTINCT TRIM(classe) as classe FROM children WHERE status='active' AND classe IS NOT NULL AND classe!='' ORDER BY classe")->fetchAll(PDO::FETCH_COLUMN);
 
-$success = "";
-$error   = "";
+$selectedClass = trim($_GET['classe'] ?? $_POST['classe'] ?? '');
+$selectedDate  = $_GET['date'] ?? $_POST['date_abs'] ?? date('Y-m-d');
 
-/* ───────── ADD ABSENCE ───────── */
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add') {
+// ── الطلاب ──
+$students    = [];
+$absencesMap = [];
+if ($selectedClass) {
+    $stmt = $pdo->prepare("SELECT * FROM children WHERE TRIM(classe)=? AND status='active' ORDER BY child_name");
+    $stmt->execute([$selectedClass]);
+    $students = $stmt->fetchAll();
 
-    $child_id = (int)$_POST['child_id'];
-    $motif    = trim($_POST['motif']);
-    $justifie = (int)$_POST['justifie'];
-    $date_abs = $_POST['date_abs'];
-
-    if (empty($motif) || empty($date_abs)) {
-        $error = "❌ Please fill in all required fields.";
-    } else {
-
-        $check = $pdo->prepare("
-            SELECT id
-            FROM absences
-            WHERE child_id=? AND date_abs=?
-        ");
-
-        $check->execute([$child_id, $date_abs]);
-
-        if ($check->fetch()) {
-            $error = "❌ An absence record already exists for this date.";
-        } else {
-
-            $stmt = $pdo->prepare("
-                INSERT INTO absences
-                (child_id, motif, justifie, date_abs)
-                VALUES (?, ?, ?, ?)
-            ");
-
-            $stmt->execute([
-                $child_id,
-                $motif,
-                $justifie,
-                $date_abs
-            ]);
-
-            $success = "✅ Absence added successfully!";
+    if (!empty($students)) {
+        $ids = array_column($students, 'id');
+        $ph  = implode(',', array_fill(0, count($ids), '?'));
+        $stmt = $pdo->prepare("SELECT child_id, justifie, motif FROM absences WHERE date_abs=? AND child_id IN ($ph)");
+        $stmt->execute(array_merge([$selectedDate], $ids));
+        foreach ($stmt->fetchAll() as $r) {
+            $absencesMap[$r['child_id']] = $r;
         }
     }
 }
 
-/* ───────── EDIT ABSENCE ───────── */
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit') {
-
-    $absence_id = (int)$_POST['absence_id'];
-    $motif      = trim($_POST['motif']);
-    $justifie   = (int)$_POST['justifie'];
-    $date_abs   = $_POST['date_abs'];
-
-    if (empty($motif) || empty($date_abs)) {
-        $error = "❌ Please fill in all required fields.";
-    } else {
-
-        $stmt = $pdo->prepare("
-            UPDATE absences
-            SET motif=?,
-                justifie=?,
-                date_abs=?
-            WHERE id=?
-        ");
-
-        $stmt->execute([
-            $motif,
-            $justifie,
-            $date_abs,
-            $absence_id
-        ]);
-
-        $success = "✅ Absence updated successfully!";
-    }
-}
-
-/* ───────── DELETE ABSENCE ───────── */
-if (isset($_GET['delete'])) {
-
-    $stmt = $pdo->prepare("
-        DELETE FROM absences
-        WHERE id=?
-    ");
-
-    $stmt->execute([
-        (int)$_GET['delete']
-    ]);
-
-    $success = "✅ Absence deleted successfully.";
-}
-
-/* ───────── CLASSES ───────── */
-$stmt = $pdo->query("
-    SELECT DISTINCT classe
-    FROM children
-    WHERE status='active'
-    ORDER BY classe
-");
-
-$classes = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-/* ───────── SELECTED CLASS ───────── */
-$selected_classe = $_GET['classe'] ?? ($classes[0] ?? '');
-$selected_child  = $_GET['child_id'] ?? null;
-
-/* ───────── STUDENTS ───────── */
-$students = [];
-
-if ($selected_classe) {
-
-    $stmt = $pdo->prepare("
-        SELECT *
-        FROM children
-        WHERE classe=?
-        AND status='active'
-        ORDER BY child_name
-    ");
-
-    $stmt->execute([$selected_classe]);
-
-    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    if (!$selected_child && !empty($students)) {
-        $selected_child = $students[0]['id'];
-    }
-}
-
-/* ───────── ABSENCES ───────── */
-$absences = [];
-
-if ($selected_child) {
-
-    $stmt = $pdo->prepare("
-        SELECT *
-        FROM absences
-        WHERE child_id=?
-        ORDER BY date_abs DESC
-    ");
-
-    $stmt->execute([$selected_child]);
-
-    $absences = $stmt->fetchAll(PDO::FETCH_ASSOC);
+function getStatus($id, $map) {
+    if (!isset($map[$id])) return 'present';
+    return $map[$id]['justifie'] == 1 ? 'justified' : 'absent';
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Absences – ECOLNA</title>
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap"
-          rel="stylesheet">
-
+    <title>Attendance – ECOLNA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="parent.css">
-
     <style>
+        .page-header { margin-bottom: 24px; }
+        .page-header h1 { font-size: 2rem; color: #1a1a2e; }
+        .page-header p  { color: #666; margin-top: 5px; }
 
-        .page-header {
-            margin-bottom: 24px;
+        .alert { padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; text-align: center; }
+        .alert-success { background: rgba(40,167,69,0.15); color: #155724; border: 1px solid rgba(40,167,69,0.3); }
+        .alert-error   { background: rgba(220,53,69,0.15); color: #721c24; border: 1px solid rgba(220,53,69,0.3); }
+
+        /* Controls */
+        .controls {
+            display: flex; gap: 14px; flex-wrap: wrap;
+            align-items: flex-end; margin-bottom: 24px;
         }
-
-        .page-header h1 {
-            font-size: 2rem;
-            color: #1a1a2e;
+        .ctrl-group { display: flex; flex-direction: column; gap: 6px; }
+        .ctrl-group label { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; }
+        .ctrl-group select, .ctrl-group input[type="date"] {
+            padding: 10px 14px; border: 1.5px solid #e0e0e0;
+            border-radius: 10px; font-family: 'Outfit', sans-serif;
+            font-size: 14px; outline: none; min-width: 160px;
         }
-
-        .page-header p {
-            color: #666;
-            margin-top: 5px;
+        .ctrl-group select:focus, .ctrl-group input:focus { border-color: #f5c842; }
+        .btn-load {
+            padding: 11px 22px; background: #1a1a2e; color: #f5c842;
+            border: none; border-radius: 10px; font-family: 'Outfit', sans-serif;
+            font-size: 14px; font-weight: 600; cursor: pointer;
         }
+        .btn-load:hover { opacity: 0.85; }
 
-        .alert {
-            padding: 12px 16px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            text-align: center;
+        /* Stats */
+        .stats-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+        .stat-pill {
+            display: flex; align-items: center; gap: 10px;
+            background: #fff; border-radius: 12px;
+            padding: 12px 18px; flex: 1; min-width: 120px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
         }
+        .stat-pill strong { font-size: 1.4rem; color: #1a1a2e; display: block; }
+        .stat-pill span   { font-size: 12px; color: #888; }
 
-        .alert-success {
-            background: rgba(40,167,69,0.15);
-            color: #155724;
-            border: 1px solid rgba(40,167,69,0.3);
+        /* Panel */
+        .panel {
+            background: #fff; border-radius: 16px; padding: 24px;
+            box-shadow: 0 2px 14px rgba(0,0,0,0.07); margin-bottom: 24px;
         }
+        .panel h3 { font-size: 16px; color: #1a1a2e; margin-bottom: 20px; }
 
-        .alert-error {
-            background: rgba(220,53,69,0.15);
-            color: #721c24;
-            border: 1px solid rgba(220,53,69,0.3);
+        /* Mark all */
+        .mark-all {
+            display: flex; gap: 8px; align-items: center;
+            margin-bottom: 16px; padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
         }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+        .mark-all span { font-size: 13px; color: #888; font-weight: 600; }
+        .btn-ma {
+            padding: 6px 14px; border-radius: 20px; border: 1.5px solid #e0e0e0;
+            background: #fff; font-family: 'Outfit', sans-serif;
+            font-size: 12px; font-weight: 600; cursor: pointer;
         }
+        .btn-ma:hover { border-color: #1a1a2e; color: #1a1a2e; }
 
-        .tab-btn {
-            padding: 8px 20px;
-            border-radius: 20px;
-            border: 2px solid #e0e0e0;
-            background: #fff;
-            cursor: pointer;
-            font-size: 14px;
-            text-decoration: none;
-            color: #555;
+        /* Student row */
+        .s-row {
+            display: flex; align-items: center; gap: 14px;
+            padding: 12px 8px; border-bottom: 1px solid #f5f5f5;
         }
-
-        .tab-btn.active,
-        .tab-btn:hover {
-            background: #0f1f3d;
-            color: #f5c842;
-            border-color: #0f1f3d;
+        .s-row:last-child { border-bottom: none; }
+        .s-num { font-size: 13px; color: #aaa; min-width: 20px; text-align: center; }
+        .s-av {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #fef9c3; color: #1a1a2e;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 700; flex-shrink: 0;
+            border: 1.5px solid #f5c842;
         }
+        .s-name { font-size: 14px; font-weight: 600; color: #1a1a2e; flex: 1; }
 
-        .add-card {
-            background: #fff;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 2px 12px rgba(0,0,0,.07);
-            margin-bottom: 28px;
-            border-top: 4px solid #f5c842;
+        /* Toggle buttons */
+        .toggle { display: flex; gap: 6px; }
+        .tog {
+            padding: 7px 14px; border-radius: 20px;
+            border: 1.5px solid #e0e0e0; background: #fff;
+            font-family: 'Outfit', sans-serif; font-size: 12px;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+            color: #888;
         }
+        .tog.present.active   { background: #d4edda; border-color: #28a745; color: #155724; }
+        .tog.absent.active    { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+        .tog.justified.active { background: #fff3cd; border-color: #ffc107; color: #856404; }
 
-        .add-card h3 {
-            color: #0f1f3d;
-            margin-bottom: 18px;
+        .s-motif {
+            padding: 7px 12px; border: 1.5px solid #e0e0e0;
+            border-radius: 8px; font-family: 'Outfit', sans-serif;
+            font-size: 12px; outline: none; width: 150px;
         }
+        .s-motif:focus { border-color: #f5c842; }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill,minmax(180px,1fr));
-            gap: 14px;
+        /* Empty */
+        .empty {
+            text-align: center; padding: 50px; color: #aaa;
         }
+        .empty i { font-size: 3rem; display: block; margin-bottom: 12px; }
 
-        .form-field {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+        /* Save row */
+        .save-row { display: flex; justify-content: flex-end; gap: 12px; }
+        .btn-save {
+            padding: 12px 32px; background: #f5c842; color: #1a1a2e;
+            border: none; border-radius: 10px; font-family: 'Outfit', sans-serif;
+            font-size: 15px; font-weight: 700; cursor: pointer;
         }
-
-        .form-field label {
-            font-size: 13px;
-            color: #555;
-            font-weight: 500;
+        .btn-save:hover { opacity: 0.9; }
+        .btn-reset {
+            padding: 12px 22px; background: transparent; color: #888;
+            border: 1.5px solid #e0e0e0; border-radius: 10px;
+            font-family: 'Outfit', sans-serif; font-size: 14px;
+            font-weight: 600; cursor: pointer;
         }
-
-        .form-field input,
-        .form-field select {
-            padding: 10px 14px;
-            border: 1.5px solid #e0e0e0;
-            border-radius: 10px;
-            outline: none;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        .form-field input:focus,
-        .form-field select:focus {
-            border-color: #f5c842;
-        }
-
-        .btn-add {
-            padding: 11px 28px;
-            background: #0f1f3d;
-            color: #f5c842;
-            border: none;
-            border-radius: 10px;
-            margin-top: 10px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-add:hover {
-            opacity: .85;
-        }
-
-        .badge {
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .badge-good {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .badge-bad {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .btn-sm {
-            padding: 5px 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .btn-edit-sm {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .btn-del-sm {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .empty-msg {
-            text-align: center;
-            padding: 50px;
-            color: #999;
-            background: #fff;
-            border-radius: 12px;
-        }
-.modal-bg {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.5);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-bg.show {
-    display: flex;
-}
-
-.modal {
-    background: white;
-    border-radius: 16px;
-    padding: 30px;
-    width: 90%;
-    max-width: 460px;
-    box-shadow: 0 8px 32px rgba(0,0,0,.2);
-}
-
-.modal h3 {
-    color: #0f1f3d;
-    margin-bottom: 20px;
-}
-
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.btn-cancel {
-    background: #f0f0f0;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-}
+        .btn-reset:hover { border-color: #dc3545; color: #dc3545; }
     </style>
 </head>
-
 <body>
 
-<div class="hamburger" id="hamburger">
-    <i class="fa fa-bars"></i>
-</div>
-
+<div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
 <nav>
-
-    <a href="HomePfe.html" class="logo"></a>
-
-    <p style="color:rgb(131,131,131);font-size:10px;">
-        Platforme Scolaire
-    </p>
-
+    <a href="index.html" class="logo"></a>
+    <p style="color:rgb(131,131,131);font-size:10px;">School Platform</p>
     <ul>
-
-        <div style="color:#fff;font-size:17px;">
-            👤 <?= htmlspecialchars($teacher_name) ?>
-        </div>
-
-        <br>
-
+        <div style="color:#fff;font-size:17px;">👨‍🏫 <?= htmlspecialchars($teacher_name) ?></div><br>
+        <p style="color:rgb(131,131,131);font-size:10px;">Classroom:</p>
         <li><a href="enseignant.php">🏠 Dashboard</a></li>
-
-        <li>
-            <a href="teacher_attendance.php"
-               style="color:#f5c842;">
-                📅 Manage Absences
-            </a>
-        </li>
-
+        <li><a href="teacher_attendance.php" style="color:#f5c842;">📅 Mark Attendance</a></li>
         <li><a href="teacher_students.php">👥 Student List</a></li>
-
         <li><a href="teacher_grades.php">⭐ Manage Grades</a></li>
-
         <li><a href="teacher_disciplinary.php">⚠️ Disciplinary</a></li>
-
-        <li>
-            <a href="login.php"
-               style="color:#ff6b6b;">
-               🚪 Logout
-            </a>
-        </li>
-
+        <li><a href="login.php" style="color:#ff6b6b;">🚪 Logout</a></li>
     </ul>
-
 </nav>
 
 <div class="container">
 
     <div class="page-header">
-
-        <h1>📅 Manage Absences</h1>
-
-        <p>
-            Select a class and student to manage absences.
-        </p>
-
+        <h1>📅 Mark Attendance</h1>
+        <p>Select a class and date, then mark each student.</p>
     </div>
 
-    <?php if($success): ?>
-        <div class="alert alert-success">
-            <?= htmlspecialchars($success) ?>
-        </div>
+    <?php if ($success): ?>
+        <div class="alert alert-success"><?= $success ?></div>
+    <?php endif; ?>
+    <?php if ($error): ?>
+        <div class="alert alert-error"><?= $error ?></div>
     <?php endif; ?>
 
-    <?php if($error): ?>
-        <div class="alert alert-error">
-            <?= htmlspecialchars($error) ?>
-        </div>
-    <?php endif; ?>
-
-    <p style="font-size:13px;color:#555;margin-bottom:8px;font-weight:500;">
-        Select Class:
-    </p>
-
-    <div class="tabs">
-
-        <?php foreach($classes as $c): ?>
-
-            <a href="?classe=<?= urlencode($c) ?>"
-               class="tab-btn <?= $c === $selected_classe ? 'active' : '' ?>">
-
-                <?= htmlspecialchars($c) ?>
-
-            </a>
-
-        <?php endforeach; ?>
-
-    </div>
-
-    <?php if(!empty($students)): ?>
-
-    <p style="font-size:13px;color:#555;margin-bottom:8px;font-weight:500;">
-        Select Student:
-    </p>
-
-    <div class="tabs">
-
-        <?php foreach($students as $s): ?>
-
-            <a href="?classe=<?= urlencode($selected_classe) ?>&child_id=<?= $s['id'] ?>"
-               class="tab-btn <?= $s['id'] == $selected_child ? 'active' : '' ?>">
-
-               👦 <?= htmlspecialchars($s['child_name'].' '.($s['prenom'] ?? '')) ?>
-
-            </a>
-
-        <?php endforeach; ?>
-
-    </div>
-
-    <?php endif; ?>
-
-    <?php if($selected_child): ?>
-
-    <div class="add-card">
-
-        <h3>➕ Add Absence</h3>
-
-        <form method="POST">
-
-            <input type="hidden"
-                   name="action"
-                   value="add">
-
-            <input type="hidden"
-                   name="child_id"
-                   value="<?= $selected_child ?>">
-
-            <div class="form-grid">
-
-                <div class="form-field">
-
-                    <label>Date</label>
-
-                    <input type="date"
-                           name="date_abs"
-                           required>
-
-                </div>
-
-                <div class="form-field">
-
-                    <label>Reason</label>
-
-                    <input type="text"
-                           name="motif"
-                           placeholder="Medical appointment"
-                           required>
-
-                </div>
-
-                <div class="form-field">
-
-                    <label>Status</label>
-
-                    <select name="justifie">
-
-                        <option value="1">
-                            Justified
+    <!-- اختيار القسم والتاريخ -->
+    <form method="GET">
+        <div class="controls">
+            <div class="ctrl-group">
+                <label>Class</label>
+                <select name="classe">
+                    <option value="">-- Select --</option>
+                    <?php foreach ($classes as $c): ?>
+                        <option value="<?= htmlspecialchars($c) ?>" <?= $c === $selectedClass ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($c) ?>
                         </option>
-
-                        <option value="0">
-                            Unjustified
-                        </option>
-
-                    </select>
-
-                </div>
-
+                    <?php endforeach; ?>
+                </select>
             </div>
-
-            <button type="submit" class="btn-add">
-                <i class="fas fa-plus"></i>
-                Add Absence
+            <div class="ctrl-group">
+                <label>Date</label>
+                <input type="date" name="date" value="<?= htmlspecialchars($selectedDate) ?>">
+            </div>
+            <button type="submit" class="btn-load">
+                <i class="fas fa-search"></i> Load
             </button>
+        </div>
+    </form>
 
-        </form>
+    <?php if (!empty($students)):
+        $total     = count($students);
+        $absent    = 0; $justified = 0;
+        foreach ($students as $s) {
+            $st = getStatus($s['id'], $absencesMap);
+            if ($st === 'absent') $absent++;
+            if ($st === 'justified') $justified++;
+        }
+        $present = $total - $absent - $justified;
+    ?>
 
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-pill">
+            <div>👥<strong id="c-total"><?= $total ?></strong><span>Total</span></div>
+        </div>
+        <div class="stat-pill">
+            <div>✅<strong id="c-present"><?= $present ?></strong><span>Present</span></div>
+        </div>
+        <div class="stat-pill">
+            <div>❌<strong id="c-absent"><?= $absent ?></strong><span>Absent</span></div>
+        </div>
+        <div class="stat-pill">
+            <div>📄<strong id="c-justified"><?= $justified ?></strong><span>Justified</span></div>
+        </div>
     </div>
 
-    <?php if(empty($absences)): ?>
+    <!-- فورم الغيابات -->
+    <form method="POST">
+        <input type="hidden" name="save" value="1">
+        <input type="hidden" name="classe"   value="<?= htmlspecialchars($selectedClass) ?>">
+        <input type="hidden" name="date_abs" value="<?= htmlspecialchars($selectedDate) ?>">
 
-<div class="empty-msg">
-    <i class="fas fa-calendar-times"></i>
-    No absence records found for this student.
-</div>
+        <div class="panel">
+            <h3>📋 Class <?= htmlspecialchars($selectedClass) ?> — <?= htmlspecialchars($selectedDate) ?></h3>
 
-<?php else: ?>
-
-<table>
-
-    <tr>
-        <th>Date</th>
-        <th>Reason</th>
-        <th>Status</th>
-        <th>Actions</th>
-    </tr>
-
-    <?php foreach($absences as $a): ?>
-
-    <tr>
-
-        <td>
-            <?= htmlspecialchars($a['date_abs']) ?>
-        </td>
-
-        <td>
-            <?= htmlspecialchars($a['motif']) ?>
-        </td>
-
-        <td>
-
-            <?php if($a['justifie']): ?>
-
-                <span class="badge badge-good">
-                    Justified
-                </span>
-
-            <?php else: ?>
-
-                <span class="badge badge-bad">
-                    Unjustified
-                </span>
-
-            <?php endif; ?>
-
-        </td>
-
-        <td>
-
-            <button
-                class="btn-sm btn-edit-sm"
-                onclick="openEdit(
-                    <?= $a['id'] ?>,
-                    '<?= addslashes($a['motif']) ?>',
-                    <?= $a['justifie'] ?>,
-                    '<?= $a['date_abs'] ?>'
-                )">
-
-                <i class="fas fa-edit"></i>
-                Edit
-
-            </button>
-
-            <a
-                href="?classe=<?= urlencode($selected_classe) ?>&child_id=<?= $selected_child ?>&delete=<?= $a['id'] ?>"
-                class="btn-sm btn-del-sm"
-                style="text-decoration:none;display:inline-block;"
-                onclick="return confirm('Delete this absence record?')">
-
-                <i class="fas fa-trash"></i>
-                Delete
-
-            </a>
-
-        </td>
-
-    </tr>
-
-    <?php endforeach; ?>
-
-</table>
-
-<?php endif; ?>
-
-<?php endif; ?>
-
-</div>
-
-
-<!-- EDIT MODAL -->
-
-<div class="modal-bg" id="editModal">
-
-    <div class="modal">
-
-        <h3>✏️ Edit Absence</h3>
-
-        <form method="POST">
-
-            <input type="hidden"
-                   name="action"
-                   value="edit">
-
-            <input type="hidden"
-                   name="absence_id"
-                   id="e_id">
-
-            <div class="form-grid">
-
-                <div class="form-field">
-
-                    <label>Date</label>
-
-                    <input type="date"
-                           name="date_abs"
-                           id="e_date"
-                           required>
-
-                </div>
-
-                <div class="form-field">
-
-                    <label>Reason</label>
-
-                    <input type="text"
-                           name="motif"
-                           id="e_motif"
-                           required>
-
-                </div>
-
-                <div class="form-field">
-
-                    <label>Status</label>
-
-                    <select name="justifie"
-                            id="e_justifie">
-
-                        <option value="1">
-                            Justified
-                        </option>
-
-                        <option value="0">
-                            Unjustified
-                        </option>
-
-                    </select>
-
-                </div>
-
+            <div class="mark-all">
+                <span>Mark all:</span>
+                <button type="button" class="btn-ma" onclick="markAll('present')">✅ Present</button>
+                <button type="button" class="btn-ma" onclick="markAll('absent')">❌ Absent</button>
             </div>
 
-            <div class="modal-footer">
-
-                <button type="button"
-                        class="btn-cancel"
-                        onclick="closeModal()">
-
-                    Cancel
-
-                </button>
-
-                <button type="submit"
-                        class="btn-add"
-                        style="margin-top:0;">
-
-                    <i class="fas fa-save"></i>
-                    Save
-
-                </button>
-
+            <?php foreach ($students as $i => $s):
+                $sid    = $s['id'];
+                $status = getStatus($sid, $absencesMap);
+                $motif  = $absencesMap[$sid]['motif'] ?? '';
+                $init   = strtoupper(substr($s['child_name'], 0, 1));
+            ?>
+            <div class="s-row">
+                <div class="s-num"><?= $i+1 ?></div>
+                <div class="s-av"><?= $init ?></div>
+                <div class="s-name"><?= htmlspecialchars($s['child_name'] . ' ' . ($s['prenom'] ?? '')) ?></div>
+                <input type="hidden" name="status[<?= $sid ?>]" id="st_<?= $sid ?>" value="<?= $status ?>">
+                <div class="toggle">
+                    <button type="button" class="tog present   <?= $status==='present'   ? 'active':'' ?>" onclick="setSt(<?= $sid ?>,'present',this)">✅</button>
+                    <button type="button" class="tog absent    <?= $status==='absent'    ? 'active':'' ?>" onclick="setSt(<?= $sid ?>,'absent',this)">❌</button>
+                    <button type="button" class="tog justified <?= $status==='justified' ? 'active':'' ?>" onclick="setSt(<?= $sid ?>,'justified',this)">📄</button>
+                </div>
+                <input class="s-motif" type="text" name="motif[<?= $sid ?>]"
+                       placeholder="Reason..." value="<?= htmlspecialchars($motif) ?>">
             </div>
+            <?php endforeach; ?>
+        </div>
 
-        </form>
+        <div class="save-row">
+            <button type="button" class="btn-reset" onclick="resetAll()">↺ Reset</button>
+            <button type="submit" class="btn-save">💾 Save</button>
+        </div>
+    </form>
 
-    </div>
+    <?php elseif ($selectedClass): ?>
+        <div class="empty"><i class="fas fa-users"></i> No students in this class.</div>
+    <?php else: ?>
+        <div class="empty"><i class="fas fa-hand-point-up"></i> Select a class to start.</div>
+    <?php endif; ?>
 
 </div>
-
 
 <script>
-
-function openEdit(id, motif, justifie, date_abs)
-{
-    document.getElementById('e_id').value = id;
-    document.getElementById('e_motif').value = motif;
-    document.getElementById('e_justifie').value = justifie;
-    document.getElementById('e_date').value = date_abs;
-
-    document
-        .getElementById('editModal')
-        .classList.add('show');
+function setSt(sid, status, btn) {
+    document.getElementById('st_' + sid).value = status;
+    btn.closest('.toggle').querySelectorAll('.tog').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateCounts();
 }
-
-function closeModal()
-{
-    document
-        .getElementById('editModal')
-        .classList.remove('show');
+function markAll(status) {
+    document.querySelectorAll('[id^="st_"]').forEach(input => {
+        input.value = status;
+        const row = input.closest('.s-row');
+        row.querySelectorAll('.tog').forEach(b => b.classList.remove('active'));
+        row.querySelector('.tog.' + status).classList.add('active');
+    });
+    updateCounts();
 }
-
-document
-.getElementById('editModal')
-.addEventListener('click', function(e)
-{
-    if(e.target === this)
-    {
-        closeModal();
-    }
-});
-
-
-const hamburger =
-document.getElementById('hamburger');
-
-const nav =
-document.querySelector('nav');
-
-hamburger.addEventListener('click', () =>
-{
+function resetAll() {
+    markAll('present');
+    document.querySelectorAll('.s-motif').forEach(i => i.value = '');
+}
+function updateCounts() {
+    let p=0, a=0, j=0;
+    document.querySelectorAll('[id^="st_"]').forEach(i => {
+        if (i.value==='present')   p++;
+        if (i.value==='absent')    a++;
+        if (i.value==='justified') j++;
+    });
+    document.getElementById('c-present').textContent   = p;
+    document.getElementById('c-absent').textContent    = a;
+    document.getElementById('c-justified').textContent = j;
+}
+const hamburger = document.getElementById('hamburger');
+const nav = document.querySelector('nav');
+hamburger.addEventListener('click', () => {
     nav.classList.toggle('active');
-
-    const icon =
-    hamburger.querySelector('i');
-
+    const icon = hamburger.querySelector('i');
     icon.classList.toggle('fa-bars');
     icon.classList.toggle('fa-times');
 });
-
-document
-.querySelectorAll('nav ul li a')
-.forEach(link =>
-{
-    link.addEventListener('click', () =>
-    {
+document.querySelectorAll('nav ul li a').forEach(link => {
+    link.addEventListener('click', () => {
         nav.classList.remove('active');
-
-        const icon =
-        hamburger.querySelector('i');
-
+        const icon = hamburger.querySelector('i');
         icon.classList.add('fa-bars');
         icon.classList.remove('fa-times');
     });
 });
-
 </script>
-
 </body>
 </html>
