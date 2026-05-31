@@ -116,18 +116,16 @@ if (!empty($classes)) {
 <body>
     <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
     <nav>
-        <a href="HomePfe.html" class="logo"></a>
-        <p style="color:rgb(131,131,131);font-size:10px;">Platforme Scolaire</p>
+        <a href="index.html" class="logo"></a>
+        <p style="color:rgb(131,131,131);font-size:10px;">School Platform</p>
         <ul>
-            <div style="color:#fff; font-size:17px;">
-                👤 <?= htmlspecialchars($teacher_name) ?>
-            </div><br>
+            <div style="color:#fff; font-size:17px;">👨‍🏫 <?= htmlspecialchars($teacher_name) ?></div><br>
             <p style="color:rgb(131,131,131);font-size:10px;">Classroom:</p>
             <li><a href="enseignant.php" style="color:#f5c842;">🏠 Dashboard</a></li>
-            <li><a href="attendance.php">📅 Mark Attendance</a></li>
-            <li><a href="teacher_students.php">👥 Student List</a></li>
-            <li><a href="teacher_grades.php">⭐ Manage Grades</a></li>
-            <li><a href="teacher_disciplinary.php">⚠️ Disciplinary</a></li>
+            <li><a href="teacher_attendance.php">📅 Mark Attendance</a></li>
+            <li><a href="teacher_students.php" >👥 Student List</a></li>
+            <li><a href="teacher_grades.php" >⭐ Manage Grades</a></li>
+            <li><a href="teacher_disciplinary.php" >⚠️ Disciplinary</a></li>
             <li><a href="login.php" style="color:#ff6b6b;">🚪 Logout</a></li>
         </ul>
     </nav>
@@ -168,7 +166,7 @@ if (!empty($classes)) {
         <!-- Quick Actions -->
         <h2 style="color:#0f1f3d;margin-bottom:16px;">Quick Actions</h2>
         <div class="quick-links">
-            <a href="attendance.php" class="quick-card">
+            <a href="teacher_attendance.php" class="quick-card">
                 <i class="fas fa-calendar-check"></i>
                 <span>Mark Attendance</span>
             </a>
