@@ -8,7 +8,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'enseignant') {
 $teacher_name = $_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name'];
 $success = $error = "";
 
-// ── إضافة نقطة ──
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add') {
     $child_id  = (int)$_POST['child_id'];
     $matiere   = trim($_POST['matiere']);
@@ -32,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add')
     }
 }
 
-// ── تعديل نقطة ──
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit') {
     $grade_id  = (int)$_POST['grade_id'];
     $matiere   = trim($_POST['matiere']);
@@ -48,21 +46,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit'
     }
 }
 
-// ── حذف نقطة ──
 if (isset($_GET['delete'])) {
     $pdo->prepare("DELETE FROM grades WHERE id=?")->execute([(int)$_GET['delete']]);
     $success = "✅ Note supprimée.";
 }
 
-// ── جلب الأقسام ──
 $stmt    = $pdo->query("SELECT DISTINCT classe FROM children WHERE status='active' AND classe IS NOT NULL ORDER BY classe");
 $classes = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-// ── القسم والطالب المختاران ──
 $selected_classe = $_GET['classe'] ?? ($classes[0] ?? '');
 $selected_child  = $_GET['child_id'] ?? null;
 
-// ── جلب الطلاب حسب القسم ──
 $students = [];
 if ($selected_classe) {
     $stmt = $pdo->prepare("SELECT * FROM children WHERE classe=? AND status='active' ORDER BY child_name");
@@ -73,7 +67,6 @@ if ($selected_classe) {
     }
 }
 
-// ── جلب النقاط ──
 $grades = [];
 if ($selected_child) {
     $stmt = $pdo->prepare("SELECT * FROM grades WHERE child_id=? ORDER BY trimestre, matiere");
@@ -195,7 +188,6 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
             <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
-        <!-- اختيار القسم -->
         <p style="font-size:13px;color:#555;margin-bottom:8px;font-weight:500;">Select Class:</p>
         <div class="tabs">
             <?php foreach ($classes as $c): ?>
@@ -206,7 +198,6 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
             <?php endforeach; ?>
         </div>
 
-        <!-- اختيار الطالب -->
         <?php if (!empty($students)): ?>
         <p style="font-size:13px;color:#555;margin-bottom:8px;font-weight:500;">Select Student:</p>
         <div class="tabs" style="margin-bottom:24px;">
@@ -221,7 +212,6 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
 
         <?php if ($selected_child): ?>
 
-        <!-- فورم إضافة نقطة -->
         <div class="add-card">
             <h3>➕ Add grade</h3>
             <form method="POST">
@@ -255,7 +245,6 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
             </form>
         </div>
 
-        <!-- عرض النقاط -->
         <?php if (empty($grades)): ?>
             <div class="empty-msg">
                 <i class="fas fa-star"></i>
@@ -322,7 +311,6 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
         <?php endif; ?>
     </div>
 
-    <!-- Modal Edit -->
     <div class="modal-bg" id="editModal">
         <div class="modal">
             <h3>✏️ Modifier la note</h3>
