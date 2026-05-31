@@ -10,11 +10,9 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'enseignant') {
 $teacher      = $_SESSION['user'];
 $teacher_name = $teacher['first_name'] . ' ' . $teacher['last_name'];
 
-// ── classes depuis emploi_temps ──
 $stmt    = $pdo->query("SELECT DISTINCT classe FROM emploi_temps ORDER BY classe");
 $classes = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-// ── total élèves actifs ──
 $totalStudents = 0;
 if (!empty($classes)) {
     $ph   = implode(',', array_fill(0, count($classes), '?'));
@@ -23,7 +21,6 @@ if (!empty($classes)) {
     $totalStudents = $stmt->fetchColumn();
 }
 
-// ── absences aujourd'hui ──
 $today       = date('Y-m-d');
 $absentToday = 0;
 if (!empty($classes)) {
@@ -39,7 +36,6 @@ if (!empty($classes)) {
 }
 $presentToday = $totalStudents - $absentToday;
 
-// ── moyenne générale ──
 $classAvg = '--';
 if (!empty($classes)) {
     $ph   = implode(',', array_fill(0, count($classes), '?'));
@@ -54,7 +50,6 @@ if (!empty($classes)) {
     if ($avg) $classAvg = $avg;
 }
 
-// ── total absences ──
 $totalAbsences = 0;
 if (!empty($classes)) {
     $ph   = implode(',', array_fill(0, count($classes), '?'));
@@ -134,7 +129,6 @@ if (!empty($classes)) {
         <h1>🏫 Teacher Dashboard</h1>
         <p>Welcome back <?= htmlspecialchars($teacher['first_name']) ?>, here's your summary for today — <?= date('d/m/Y') ?></p>
 
-        <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-card">
                 <i class="fas fa-users"></i>
@@ -163,7 +157,7 @@ if (!empty($classes)) {
             </div>
         </div>
 
-        <!-- Quick Actions -->
+
         <h2 style="color:#0f1f3d;margin-bottom:16px;">Quick Actions</h2>
         <div class="quick-links">
             <a href="teacher_attendance.php" class="quick-card">
