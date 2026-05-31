@@ -31,7 +31,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         
-        /* ── MAIN CONTENT ── */
         .contact-main {
             display: flex;
             justify-content: center;
@@ -52,7 +51,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             width: 100%;
         }
 
-        /* LEFT SIDE */
         .contact-left {
             background: linear-gradient(135deg, #0f1f3d, #1a3a6b);
             padding: 50px 40px;
@@ -110,7 +108,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             color: rgba(255,255,255,0.7);
         }
 
-        /* RIGHT SIDE */
         .contact-right {
             padding: 50px 40px;
             background: #fff;
@@ -198,7 +195,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         .btn-send:hover { opacity: 0.88; transform: translateY(-1px); }
 
-        /* ── MOBILE ── */
+
         @media (max-width: 700px) {
             .contact-wrapper { grid-template-columns: 1fr; }
             .contact-left { padding: 36px 28px; }
@@ -211,7 +208,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav>
     <a href="index.html" class="logo"></a>
     <div class="hamburger" id="hamburger">
@@ -232,11 +228,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </ul>
 </nav>
 
-<!-- MAIN -->
 <div class="contact-main">
     <div class="contact-wrapper">
 
-        <!-- LEFT -->
+
         <div class="contact-left">
             <h2>Get in Touch</h2>
             <p>Have a question or need help? We're here for you. Fill out the form and we'll get back to you as soon as possible.</p>
@@ -273,7 +268,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
         </div>
 
-        <!-- RIGHT -->
         <div class="contact-right">
             <h3>Send us a Message</h3>
             <p>We'll respond within 24 hours.</p>
