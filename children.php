@@ -7,7 +7,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'parent') {
 $parent_id = $_SESSION['user']['id'];
 $success = $error = "";
 
-// ── Action Handlers ──
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
     if ($_POST['action'] === 'add') {
@@ -53,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Fetch Children Records
 $stmt = $pdo->prepare("SELECT * FROM children WHERE parent_id = ? ORDER BY id");
 $stmt->execute([$parent_id]);
 $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -145,7 +143,7 @@ $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
         .alert-success { background: rgba(40,167,69,0.15); color: #155724; border: 1px solid rgba(40,167,69,0.3); }
         .alert-error   { background: rgba(220,53,69,0.15); color: #721c24; border: 1px solid rgba(220,53,69,0.3); }
 
-        /* Modal styling */
+
         .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
         .modal-bg.show { display: flex; }
         .modal { background: #fff; border-radius: 16px; padding: 30px; width: 90%; max-width: 560px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
