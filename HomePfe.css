@@ -99,9 +99,9 @@ nav ul li a:hover::after {
 }
 
 #language-select{
-background: transparent;   /* تنحي الخلفية البيضا */
-    border: none;              /* تنحي الإطار المربع القديم */
-    color: #ffffff;            /* ترجع الكتيبة بيضا */
+background: transparent;   
+    border: none;              
+    color: #ffffff;           
     font-family: 'Outfit', sans-serif;
     font-size: 15px;
     cursor: pointer;
@@ -113,50 +113,45 @@ background: transparent;   /* تنحي الخلفية البيضا */
 }
 
 
-/* إخفاء الهامبرغر في الشاشات الكبيرة */
 .hamburger {
     display: none;
     cursor: pointer;
     font-size: 25px;
-    color: #fff; /* أو أي لون يناسبك */
+    color: #fff; 
 }
 
-/* إظهاره فقط في الموبايل */
 @media (max-width: 610px) {
-    /* الـ nav يظل ظاهراً في مكانه */
     nav {
-        flex-direction: row; /* الأيقونة واللوجو على نفس الخط */
+        flex-direction: row; 
         height: auto;
-        width: 95%; /* ليناسب عرض الشاشة مع الهوامش */
-        position: sticky !important; /* !important للتغلب على أي تنسيق آخر */
+        width: 95%;
+        position: sticky !important; 
         top: 0 !important;
         z-index: 10000;}
 
-    /* الـ ul هي التي تختفي وتظهر من اليمين */
     nav ul {
         flex-direction: column;
         justify-content: center;
         align-items: center;
         position: fixed;
         top: 0;
-        right: -100%; /* مخفية تماماً خارج الشاشة */
+        right: -100%; 
         width: 60%;
         height: 100vh;
-        background:linear-gradient(to left, #0f0f0e9c, #4e6474); /* اللون الأصفر الذي اخترتِه */
+        background:linear-gradient(to left, #0f0f0e9c, #4e6474); 
         transition: 0.5s ease;
         z-index: 100;
-        display: flex; /* لضمان ظهور العناصر بشكل عمودي */
+        display: flex; 
 
     }
 
-    /* عندما نضيف كلاس active يظهر الـ ul */
     nav.active ul {
         right: 0;
     }
 
     .hamburger {
-        display: block; /* إظهار الزر في الجوال فقط */
-        z-index: 101; /* ليكون فوق القائمة الصفراء */
+        display: block; 
+        z-index: 101; 
         cursor: pointer;
     }
     nav ul {
@@ -164,28 +159,28 @@ background: transparent;   /* تنحي الخلفية البيضا */
                 border-radius: 25px;
     }
     nav ul li a {
-        color: #ffffff; /* تغيير لون الخط للأسود ليتناسب مع الخلفية الصفراء */
+        color: #ffffff; 
         font-size: 1.6rem;
 
     }
 }
 @media (max-width: 610px) {
     .org {
-        height: 100vh; /* يبقى كما هو ليغطي الشاشة */
+        height: 100vh; 
         position: relative;
         overflow: hidden;
     }
 
     .org img {
         position: absolute;
-        top: 50%; /* نضع منتصف الصورة في منتصف الشاشة */
+        top: 50%; 
         left: 50%;
-        transform: translate(-50%, -50%); /* سنتر دقيق جداً */
+        transform: translate(-50%, -50%); 
         min-width: 100%; 
         min-height: 100%;
-        width: auto !important; /* نترك العرض يتعدل تلقائياً لئلا تضغط */
-        height: auto !important; /* نترك الطول يتعدل تلقائياً لئلا تضغط */
-        object-fit: cover; /* هذا هو الأهم، سيقوم بقص الأطراف الزائدة فقط */
+        width: auto !important; 
+        height: auto !important; 
+        object-fit: cover; 
         z-index: -1;
     }
 }
@@ -491,13 +486,11 @@ span{
 
 
 
-        /* ─── ANIMATIONS ─── */
         @keyframes fadeDown {
             from { opacity: 0; transform: translateY(-20px); }
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* ─── RESPONSIVE ─── */
         @media (max-width: 768px) {
             nav { padding: 14px 24px; }
             nav ul { gap: 18px; }
