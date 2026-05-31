@@ -5,7 +5,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
     header("Location: login.php"); exit;
 }
 
-// ── طلاب في صعوبة (معدل أقل من 5) ──
 $struggling = $pdo->query("
     SELECT c.child_name, c.classe, ROUND(AVG(g.note),2) as avg,
            COUNT(g.id) as total_grades
@@ -16,7 +15,6 @@ $struggling = $pdo->query("
     ORDER BY avg ASC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// ── أفضل الطلاب (معدل أعلى من 7) ──
 $top_students = $pdo->query("
     SELECT c.child_name, c.classe, ROUND(AVG(g.note),2) as avg,
            COUNT(g.id) as total_grades
@@ -28,7 +26,6 @@ $top_students = $pdo->query("
     LIMIT 10
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// ── معدل كل طالب ──
 $all_avg = $pdo->query("
     SELECT c.child_name, c.classe, ROUND(AVG(g.note),2) as avg
     FROM grades g
@@ -37,7 +34,6 @@ $all_avg = $pdo->query("
     ORDER BY c.classe, avg DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// ── غيابات كثيرة (أكثر من 5) ──
 $absent_alert = $pdo->query("
     SELECT c.child_name, c.classe, COUNT(a.id) as total
     FROM absences a
@@ -47,7 +43,6 @@ $absent_alert = $pdo->query("
     ORDER BY total DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// ── معدل حسب القسم ──
 $avg_by_classe = $pdo->query("
     SELECT c.classe, ROUND(AVG(g.note),2) as avg
     FROM grades g
@@ -155,7 +150,6 @@ $avg_by_classe = $pdo->query("
         <p>Detailed analysis of grades, absences, and student performance.</p>
     </div>
 
-    <!-- Summary -->
     <div class="summary-grid">
         <div class="summary-card">
             <div class="num" style="color:#dc3545;"><?= count($struggling) ?></div>
@@ -175,7 +169,6 @@ $avg_by_classe = $pdo->query("
         </div>
     </div>
 
-    <!-- Alerts -->
     <?php if (!empty($struggling)): ?>
     <div class="alert-card">
         <i class="fas fa-exclamation-triangle"></i>
@@ -196,13 +189,11 @@ $avg_by_classe = $pdo->query("
     </div>
     <?php endif; ?>
 
-    <!-- Chart: Average by Class -->
     <div class="chart-card">
         <h3>📊 Average Grade per Class</h3>
         <canvas id="avgClasseChart" height="80"></canvas>
     </div>
 
-    <!-- Students in Difficulty -->
     <div class="section-title">🔴 Students in Difficulty (avg &lt; 5/10)</div>
     <?php if (empty($struggling)): ?>
         <p style="color:#28a745;font-weight:600;margin-bottom:20px;">✅ No students in difficulty!</p>
@@ -221,7 +212,6 @@ $avg_by_classe = $pdo->query("
     </table>
     <?php endif; ?>
 
-    <!-- Top Students -->
     <div class="section-title">🟢 Top Students (avg ≥ 7/10)</div>
     <?php if (empty($top_students)): ?>
         <p style="color:#888;margin-bottom:20px;">No top students yet.</p>
@@ -240,7 +230,6 @@ $avg_by_classe = $pdo->query("
     </table>
     <?php endif; ?>
 
-    <!-- Absence Alerts -->
     <div class="section-title">⚠️ Absence Alerts (≥ 5 absences)</div>
     <?php if (empty($absent_alert)): ?>
         <p style="color:#28a745;font-weight:600;margin-bottom:20px;">✅ No absence alerts!</p>
@@ -262,7 +251,6 @@ $avg_by_classe = $pdo->query("
     </table>
     <?php endif; ?>
 
-    <!-- All Students Average -->
     <div class="section-title">📋 All Students — Performance Overview</div>
     <table>
         <tr><th>Student</th><th>Class</th><th>Average / 10</th><th>Performance</th></tr>
@@ -282,7 +270,7 @@ $avg_by_classe = $pdo->query("
 </div>
 
 <script>
-// Average per Class Chart
+
 const labels = <?= json_encode(array_column($avg_by_classe, 'classe')) ?>;
 const data   = <?= json_encode(array_column($avg_by_classe, 'avg')) ?>;
 const colors = data.map(v => v >= 7 ? '#28a745' : (v >= 5 ? '#ffc107' : '#dc3545'));
@@ -305,8 +293,8 @@ new Chart(document.getElementById('avgClasseChart'), {
     }
 });
 
-// Hamburger
-const hamburger = document.getElementById('hamburger');
+
+    const hamburger = document.getElementById('hamburger');
 const nav = document.querySelector('nav');
 hamburger.addEventListener('click', () => {
     nav.classList.toggle('active');
