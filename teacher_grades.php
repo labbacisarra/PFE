@@ -15,12 +15,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add')
     $note      = (float)$_POST['note'];
     $trimestre = trim($_POST['trimestre']);
 
-    if ($note < 0 || $note > 20) {
-        $error = "❌ La note doit être entre 0 et 20.";
+    if ($note < 0 || $note > 10) {
+        $error = "❌ La note doit être entre 0 et 10.";
     } elseif (empty($matiere) || empty($trimestre)) {
         $error = "❌ Veuillez remplir tous les champs.";
     } else {
-        // تحقق إذا النقطة موجودة مسبقاً لنفس الطالب ونفس المادة ونفس الفصل
         $check = $pdo->prepare("SELECT id FROM grades WHERE child_id=? AND matiere=? AND trimestre=?");
         $check->execute([$child_id, $matiere, $trimestre]);
         if ($check->fetch()) {
@@ -40,8 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit'
     $note      = (float)$_POST['note'];
     $trimestre = trim($_POST['trimestre']);
 
-    if ($note < 0 || $note > 20) {
-        $error = "❌ La note doit être entre 0 et 20.";
+    if ($note < 0 || $note > 10) {
+        $error = "❌ La note doit être entre 0 et 10.";
     } else {
         $pdo->prepare("UPDATE grades SET matiere=?, note=?, trimestre=? WHERE id=?")
             ->execute([$matiere, $note, $trimestre, $grade_id]);
@@ -56,10 +55,8 @@ if (isset($_GET['delete'])) {
 }
 
 // ── جلب الأقسام ──
-
 $stmt    = $pdo->query("SELECT DISTINCT classe FROM children WHERE status='active' AND classe IS NOT NULL ORDER BY classe");
 $classes = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
 
 // ── القسم والطالب المختاران ──
 $selected_classe = $_GET['classe'] ?? ($classes[0] ?? '');
@@ -84,7 +81,7 @@ if ($selected_child) {
     $grades = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-$matieres   = ['Mathematics','Physics','Chemistry','Arabic','French','English','History','Geography','Philosophy','Informatique','Islamic Studies','Sport'];
+$matieres   = ['Mathematics','Arabic','French','English','History','Geography','Islamic Studies','Sport'];
 $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
 ?>
 <!DOCTYPE html>
@@ -105,7 +102,6 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
         .alert-success { background: rgba(40,167,69,0.15); color: #155724; border: 1px solid rgba(40,167,69,0.3); }
         .alert-error   { background: rgba(220,53,69,0.15); color: #721c24; border: 1px solid rgba(220,53,69,0.3); }
 
-        /* tabs */
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .tab-btn {
             padding: 8px 20px; border-radius: 20px; border: 2px solid #e0e0e0;
@@ -114,7 +110,6 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
         }
         .tab-btn.active, .tab-btn:hover { background: #0f1f3d; color: #f5c842; border-color: #0f1f3d; }
 
-        /* add card */
         .add-card {
             background: #fff; border-radius: 16px; padding: 24px;
             box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 28px;
@@ -137,7 +132,6 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
         }
         .btn-add:hover { opacity: 0.85; }
 
-        /* trimestre section */
         .trimestre-section { margin-bottom: 28px; }
         .trimestre-title {
             font-size: 1rem; font-weight: 600; color: #0f1f3d;
@@ -163,7 +157,6 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
         .empty-msg { text-align: center; padding: 50px; color: #999; background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
         .empty-msg i { font-size: 3rem; margin-bottom: 15px; display: block; }
 
-        /* Modal */
         .modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
         .modal-bg.show { display: flex; }
         .modal { background: #fff; border-radius: 16px; padding: 30px; width: 90%; max-width: 460px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
@@ -175,14 +168,14 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
 <body>
     <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
     <nav>
-        <a href="HomePfe.html" class="logo"></a>
-        <p style="color:rgb(131,131,131);font-size:10px;">Platforme Scolaire</p>
+        <a href="index.html" class="logo"></a>
+        <p style="color:rgb(131,131,131);font-size:10px;">School Platform</p>
         <ul>
-            <div style="color:#fff; font-size:17px;">👤 <?= htmlspecialchars($teacher_name) ?></div><br>
+            <div style="color:#fff; font-size:17px;">👨‍🏫 <?= htmlspecialchars($teacher_name) ?></div><br>
             <p style="color:rgb(131,131,131);font-size:10px;">Classroom:</p>
             <li><a href="enseignant.php">🏠 Dashboard</a></li>
             <li><a href="teacher_attendance.php">📅 Mark Attendance</a></li>
-            <li><a href="teacher_students.php" >👥 Student List</a></li>
+            <li><a href="teacher_students.php">👥 Student List</a></li>
             <li><a href="teacher_grades.php" style="color:#f5c842;">⭐ Manage Grades</a></li>
             <li><a href="teacher_disciplinary.php">⚠️ Disciplinary</a></li>
             <li><a href="login.php" style="color:#ff6b6b;">🚪 Logout</a></li>
@@ -230,13 +223,13 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
 
         <!-- فورم إضافة نقطة -->
         <div class="add-card">
-            <h3>➕ Ajouter une note</h3>
+            <h3>➕ Add grade</h3>
             <form method="POST">
                 <input type="hidden" name="action" value="add">
                 <input type="hidden" name="child_id" value="<?= $selected_child ?>">
                 <div class="form-grid">
                     <div class="form-field">
-                        <label>Matière</label>
+                        <label>Subject</label>
                         <select name="matiere">
                             <?php foreach ($matieres as $m): ?>
                                 <option value="<?= $m ?>"><?= $m ?></option>
@@ -244,11 +237,11 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
                         </select>
                     </div>
                     <div class="form-field">
-                        <label>Note / 20</label>
-                        <input type="number" name="note" min="0" max="20" step="0.25" placeholder="Ex: 14.5" required>
+                        <label>Grade / 10</label>
+                        <input type="number" name="note" min="0" max="10" step="0.25" placeholder="Ex: 7.5" required>
                     </div>
                     <div class="form-field">
-                        <label>Trimestre</label>
+                        <label>Trimester</label>
                         <select name="trimestre">
                             <?php foreach ($trimesters as $t): ?>
                                 <option value="<?= $t ?>"><?= $t ?></option>
@@ -257,7 +250,7 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
                     </div>
                 </div>
                 <button type="submit" class="btn-add">
-                    <i class="fas fa-plus"></i> Ajouter
+                    <i class="fas fa-plus"></i> Add
                 </button>
             </form>
         </div>
@@ -266,7 +259,7 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
         <?php if (empty($grades)): ?>
             <div class="empty-msg">
                 <i class="fas fa-star"></i>
-                Aucune note enregistrée pour cet élève.
+                No grades recorded for this student.
             </div>
         <?php else:
             $byTrimestre = [];
@@ -277,22 +270,24 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
                 $avg = array_sum(array_column($rows, 'note')) / count($rows);
         ?>
             <div class="trimestre-section">
-                <div class="trimestre-title">📅 <?= htmlspecialchars($trimestre) ?> — Moyenne: <?= number_format($avg, 2) ?>/20</div>
+                <div class="trimestre-title">
+                    📅 <?= htmlspecialchars($trimestre) ?> — Moyenne: <?= number_format($avg, 2) ?>/10
+                </div>
                 <table>
                     <tr>
-                        <th>Matière</th>
-                        <th>Note / 20</th>
-                        <th>Statut</th>
+                        <th>Subject</th>
+                        <th>Grade / 10</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                     <?php foreach ($rows as $g):
                         $note  = $g['note'];
-                        $badge = $note >= 14 ? 'badge-good' : ($note >= 10 ? 'badge-avg' : 'badge-bad');
-                        $label = $note >= 14 ? 'Bien' : ($note >= 10 ? 'Moyen' : 'Insuffisant');
+                        $badge = $note >= 7 ? 'badge-good' : ($note >= 5 ? 'badge-avg' : 'badge-bad');
+                        $label = $note >= 7 ? 'Bien' : ($note >= 5 ? 'Moyen' : 'Insuffisant');
                     ?>
                     <tr>
                         <td><?= htmlspecialchars($g['matiere']) ?></td>
-                        <td><strong><?= number_format($note, 2) ?></strong> / 20</td>
+                        <td><strong><?= number_format($note, 2) ?></strong> / 10</td>
                         <td><span class="badge <?= $badge ?>"><?= $label ?></span></td>
                         <td>
                             <button class="btn-sm btn-edit-sm" onclick="openEdit(
@@ -311,11 +306,11 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
                     </tr>
                     <?php endforeach; ?>
                     <tr class="avg-row">
-                        <td>📌 Moyenne du trimestre</td>
-                        <td><strong><?= number_format($avg, 2) ?></strong> / 20</td>
+                        <td>📌 Term Average</td>
+                        <td><strong><?= number_format($avg, 2) ?></strong> / 10</td>
                         <td>
-                            <span class="badge <?= $avg >= 14 ? 'badge-good' : ($avg >= 10 ? 'badge-avg' : 'badge-bad') ?>">
-                                <?= $avg >= 14 ? 'Excellent' : ($avg >= 10 ? 'Admis' : 'Échec') ?>
+                            <span class="badge <?= $avg >= 7 ? 'badge-good' : ($avg >= 5 ? 'badge-avg' : 'badge-bad') ?>">
+                                <?= $avg >= 7 ? 'Excellent' : ($avg >= 5 ? 'Admis' : 'Échec') ?>
                             </span>
                         </td>
                         <td>—</td>
@@ -344,8 +339,8 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
                         </select>
                     </div>
                     <div class="form-field">
-                        <label>Note / 20</label>
-                        <input type="number" name="note" id="e_note" min="0" max="20" step="0.25" required>
+                        <label>Note / 10</label>
+                        <input type="number" name="note" id="e_note" min="0" max="10" step="0.25" required>
                     </div>
                     <div class="form-field">
                         <label>Trimestre</label>
@@ -368,9 +363,9 @@ $trimesters = ['Trimestre 1','Trimestre 2','Trimestre 3'];
 
     <script>
         function openEdit(id, matiere, note, trimestre) {
-            document.getElementById('e_id').value       = id;
-            document.getElementById('e_matiere').value  = matiere;
-            document.getElementById('e_note').value     = note;
+            document.getElementById('e_id').value        = id;
+            document.getElementById('e_matiere').value   = matiere;
+            document.getElementById('e_note').value      = note;
             document.getElementById('e_trimestre').value = trimestre;
             document.getElementById('editModal').classList.add('show');
         }
