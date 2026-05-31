@@ -5,7 +5,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
     header("Location: login.php"); exit;
 }
 
-// إحصائيات
 $total_users    = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 $total_parents  = $pdo->query("SELECT COUNT(*) FROM users WHERE role='parent'")->fetchColumn();
 $total_teachers = $pdo->query("SELECT COUNT(*) FROM users WHERE role='enseignant'")->fetchColumn();
@@ -85,7 +84,6 @@ $pending        = $pdo->query("SELECT COUNT(*) FROM users WHERE role='parent'")-
         <h1>🛡️ Admin Dashboard</h1>
         <p>Welcome back, manage everything from here.</p>
 
-        <!-- إحصائيات -->
         <div class="stats-grid">
             <div class="stat-card">
                 <i class="fas fa-users"></i>
@@ -114,7 +112,6 @@ $pending        = $pdo->query("SELECT COUNT(*) FROM users WHERE role='parent'")-
             </div>
         </div>
 
-        <!-- روابط سريعة -->
         <h2 style="color:#0f1f3d;margin-bottom:16px;">Quick Actions</h2>
         <div class="quick-links">
             <a href="admin_users.php" class="quick-card">
