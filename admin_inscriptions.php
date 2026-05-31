@@ -7,7 +7,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
 
 $success = "";
 
-// ── GET Actions ──
 if (isset($_GET['approve'])) {
     $pdo->prepare("UPDATE children SET status='active' WHERE id=?")->execute([(int)$_GET['approve']]);
     $success = "✅ Child record approved successfully.";
@@ -21,7 +20,6 @@ if (isset($_GET['delete'])) {
     $success = "🗑️ Child record deleted.";
 }
 
-// ── POST Action : edit (only active) ──
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'edit') {
     $id             = (int)$_POST['child_id'];
     $child_name     = trim($_POST['child_name']);
@@ -31,7 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $situation      = $_POST['situation_familiale'];
     $niveau         = trim($_POST['niveau']);
 
-    // تحقق أن الولد في حالة active فقط
     $check = $pdo->prepare("SELECT status FROM children WHERE id=?");
     $check->execute([$id]);
     $row = $check->fetch(PDO::FETCH_ASSOC);
@@ -48,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// ── Search & Filter ──
 $search        = trim($_GET['search'] ?? '');
 $filter_status = $_GET['status'] ?? 'all';
 
@@ -75,7 +71,6 @@ $stmt = $pdo->prepare("
 $stmt->execute($params);
 $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// ── Stats ──
 $stats = $pdo->query("
     SELECT 
         SUM(status='pending')  AS pending,
@@ -166,7 +161,6 @@ $situation_map = [
         .btn-edit    { background: #e8f4fd; color: #0369a1; }
         .btn-action:hover { opacity: 0.8; transform: scale(1.02); }
 
-        /* pending — no edit hint */
         .pending-note { font-size: 11px; color: #aaa; text-align: center; font-style: italic; margin-top: 4px; }
 
         .empty-note { text-align: center; padding: 40px; color: #aaa; background: #fff; border-radius: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 20px; }
@@ -220,7 +214,6 @@ $situation_map = [
         <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
     <?php endif; ?>
 
-    <!-- Stats -->
     <div class="stats-row">
         <div class="stat-card">
             <div class="stat-icon pending">⏳</div>
@@ -245,7 +238,6 @@ $situation_map = [
         </div>
     </div>
 
-    <!-- Search -->
     <form method="GET" action="admin_inscriptions.php">
         <div class="search-box">
             <div class="search-input-wrap">
@@ -267,7 +259,6 @@ $situation_map = [
     </form>
 
     <?php
-    // ── render function ──
     function renderSection($list, $situation_map, $showApprove=false, $showReject=false, $canEdit=false) {
         if (empty($list)) {
             echo '<div class="empty-note"><i class="fas fa-inbox"></i>No records found.</div>';
@@ -310,7 +301,7 @@ $situation_map = [
 
                 <div class="card-actions">
                     <?php if ($canEdit): ?>
-                    <!-- Edit — only for active/rejected -->
+
                     <button class="btn-action btn-edit" onclick="openEdit(
                         <?= $id ?>,
                         '<?= addslashes($c['child_name']) ?>',
@@ -321,8 +312,8 @@ $situation_map = [
                         '<?= addslashes($c['niveau']??'') ?>'
                     )"><i class="fas fa-edit"></i> Edit</button>
                     <?php else: ?>
-                    <!-- pending — no edit -->
-                                        <?php endif; ?>
+
+                    <?php endif; ?>
 
                     <?php if ($showApprove): ?>
                     <a href="?approve=<?= $id ?>" class="btn-action btn-approve"
@@ -354,21 +345,20 @@ $situation_map = [
     }
     ?>
 
-    <!-- ⏳ PENDING — no edit -->
     <div class="section-title">
         ⏳ Pending
         <span class="count-badge"><?= count($pending_list) ?></span>
     </div>
     <?php renderSection($pending_list, $situation_map, true, false, false); ?>
 
-    <!-- ✅ APPROVED — edit allowed -->
+
     <div class="section-title">
         ✅ Approved
         <span class="count-badge" style="background:#28a745;color:#fff;"><?= count($active_list) ?></span>
     </div>
     <?php renderSection($active_list, $situation_map, false, false, true); ?>
 
-    <!-- ❌ REJECTED — edit allowed + re-approve -->
+
     <div class="section-title">
         ❌ Rejected
         <span class="count-badge" style="background:#dc3545;color:#fff;"><?= count($rejected_list) ?></span>
@@ -377,7 +367,6 @@ $situation_map = [
 
 </div>
 
-<!-- Edit Modal -->
 <div class="modal-bg" id="editModal">
     <div class="modal">
         <h3>✏️ Edit Child Record</h3>
