@@ -10,24 +10,18 @@ body{
     font-family: 'Outfit', sans-serif;
     background: linear-gradient(to right, #b8dade, #ffffff);
     background-position: center;
+        nav{
+        background: linear-gradient(to left, #87b5e1, #b8dade) !important;
 
+         }
     color: #ffffff;
     width: 100%;
     min-height: 100vh;
     overflow-x: hidden;
 }
-/* عندما يتم تطبيق الفلتر على الصفحة بالكامل */
-html[style*="invert(1)"] img,
-html[style*="invert(1)"] .logo,
-html[style*="invert(1)"] [style*="background-image"] {
-    /* نقوم بقلب الصور مرة أخرى لتعود لألوانها الأصلية */
-    filter: invert(1) hue-rotate(180deg);
-}
-html[style*="invert(1)"] {
-    background-color: #000; /* لضمان عدم وجود حواف بيضاء */
-}
+
 .org{
-    background-image:url(pics/heros.png);
+    background-image:url('heros.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -37,18 +31,31 @@ html[style*="invert(1)"] {
     flex-direction: column;
 }
 nav{ 
+
     display: flex;
+
     justify-content:space-between;
+
     align-items: center;
+
     padding: 10px 30px;
+
     backdrop-filter: blur(8px);
+
     border-bottom: 1px solid rgba(255,255,255,0.12);
+
     position: sticky;
+
     top: 0;
+
     z-index: 100;
+
 -webkit-backdrop-filter: blur(8px);
+
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+
   background: rgba(182, 220, 218, 0); 
+
   margin: 20px;
 
 }
@@ -90,6 +97,22 @@ nav ul li a:hover{
 nav ul li a:hover::after {
     width: 100%;
 }
+
+#language-select{
+background: transparent;   /* تنحي الخلفية البيضا */
+    border: none;              /* تنحي الإطار المربع القديم */
+    color: #ffffff;            /* ترجع الكتيبة بيضا */
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    outline: none;
+}
+#language-select option {
+    color: black;
+    background: white;
+}
+
+
 /* إخفاء الهامبرغر في الشاشات الكبيرة */
 .hamburger {
     display: none;
@@ -222,7 +245,7 @@ span{
     border-radius: 50%;
     border: 2px solid #f5c842;
     margin-right: 50px;
-    background: url(pics/Ecolna.jpg) center/cover,no-repeat;
+    background: url('Ecolna.jpg') center/cover,no-repeat;
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
     transition: transform 0.3s ease;
 }
@@ -380,8 +403,8 @@ span{
 
         .footer-top {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 60px;
+            grid-template-columns: 2fr 1fr;
+            gap: 80px;
             margin-bottom: 50px;
         }
 
@@ -393,12 +416,14 @@ span{
         }
 
         .footer-brand p {
-            color: var(--purple-mid);
+            color: #000;
             font-size: 15px;
             line-height: 1.7;
             font-weight: 300;
             max-width: 320px;
         }
+         
+
 
         .footer-col h4 {
             font-size: 13px;
@@ -416,16 +441,15 @@ span{
         }
 
         .footer-col ol li a {
-            color: var(--purple-mid);
+            color: #000;
             text-decoration: none;
             font-size: 15px;
             font-weight: 300;
             transition: color 0.3s;
         }
                 .footer-col ol li a:hover {
-            color: var(--white);
+            color: #f5c842;
         }
-
   
         .footer-bottom {
             border-top: 1px solid var(--glass-border);
