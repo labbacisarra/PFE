@@ -6,7 +6,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'enseignant') {
     header("Location: login.php"); exit;
 }
 
-// جلب كل الأولاد المفعّلين مصنفين حسب القسم
 $stmt = $pdo->query("
     SELECT 
         c.id,
@@ -24,7 +23,6 @@ $stmt = $pdo->query("
 ");
 $all_children = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// تصنيف حسب القسم
 $classes = [];
 foreach ($all_children as $child) {
     $classe = $child['classe'] ?: 'No Class Assign';
@@ -46,14 +44,12 @@ $total_classes = count($classes);
     <link rel="stylesheet" href="parent.css">
     <style>
  
-        /* ── CONTAINER ── */
         .container {
             margin-left: 20%;
             padding: 40px;
             width: 80%;
         }
 
-        /* ── Stats ── */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -81,7 +77,6 @@ $total_classes = count($classes);
         .stat-info strong { font-size: 1.6rem; color: #1a1a2e; display: block; line-height: 1.1; }
         .stat-info span   { font-size: 12px; color: #888; }
 
-        /* ── Search & Filter ── */
         .toolbar {
             display: flex;
             gap: 12px;
@@ -122,7 +117,6 @@ $total_classes = count($classes);
         }
         .filter-select:focus { border-color: #f5c842; }
 
-        /* ── Class Section ── */
         .classe-section { margin-bottom: 32px; }
 
         .classe-header {
@@ -157,7 +151,6 @@ $total_classes = count($classes);
             font-weight: 700;
         }
 
-        /* ── Student Cards ── */
         .children-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -239,7 +232,6 @@ $total_classes = count($classes);
         }
         .parent-badge i { font-size: 12px; }
 
-        /* ── Empty ── */
         .empty-msg {
             text-align: center;
             padding: 70px 40px;
@@ -257,12 +249,10 @@ $total_classes = count($classes);
         .empty-msg h3 { color: #1a1a2e; margin-bottom: 8px; font-size: 1.2rem; }
         .empty-msg p  { font-size: 14px; }
 
-        /* ── Page Header ── */
         .page-header { margin-bottom: 26px; }
         .page-header h1 { font-size: 2rem; color: #1a1a2e; }
         .page-header p  { color: #666; margin-top: 5px; font-size: 14px; }
 
-        /* ── No results (search) ── */
         .no-results {
             display: none;
             text-align: center;
@@ -421,7 +411,7 @@ $total_classes = count($classes);
 </div>
 
 <script>
-    // ── Hamburger menu ──
+
     const hamburger = document.getElementById('hamburger');
     const nav = document.querySelector('nav');
     hamburger.addEventListener('click', () => {
@@ -439,7 +429,7 @@ $total_classes = count($classes);
         });
     });
 
-    // ── Recherche + Filtre par classe ──
+
     function filterEleves() {
         const search      = document.getElementById('searchInput').value.toLowerCase().trim();
         const classeFilter = document.getElementById('classeFilter').value;
@@ -450,7 +440,7 @@ $total_classes = count($classes);
         sections.forEach(section => {
             const sectionClasse = section.getAttribute('data-classe');
 
-            // filtre par classe
+
             if (classeFilter && sectionClasse !== classeFilter) {
                 section.style.display = 'none';
                 return;
@@ -470,7 +460,7 @@ $total_classes = count($classes);
             totalVisible += visibleInSection;
         });
 
-        // message aucun résultat
+
         document.getElementById('no-results').style.display =
             totalVisible === 0 && (search || classeFilter) ? 'block' : 'none';
     }
