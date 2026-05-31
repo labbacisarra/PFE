@@ -192,7 +192,7 @@ $situation_map = [
 
 <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
 <nav>
-    <a href="HomePfe.html" class="logo"></a>
+    <a href="index.html" class="logo"></a>
     <p style="color:rgb(131,131,131);font-size:10px;">School Platform</p>
     <ul>
         <div style="color:#fff;font-size:17px;">
@@ -203,6 +203,8 @@ $situation_map = [
         <li><a href="admin_users.php">👥 Users</a></li>
         <li><a href="admin_timetable.php">🕐 Timetable</a></li>
         <li><a href="admin_inscriptions.php" style="color:#f5c842;">📋 Inscriptions</a></li>
+            <li><a href="admin_statistics.php">📊 Statistics</a></li>
+            <li><a href="admin_analysis.php">🔍 Analysis</a></li>
         <li><a href="login.php" style="color:#ff6b6b;">🚪 Logout</a></li>
     </ul>
 </nav>
