@@ -6,7 +6,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
 }
 
 $success = $error = "";
-$classes = ['1AS1','1AS2','2AS1','2AS2','3AS1','3AS2'];
+$classes = ['1AS1','1AS2','2AS1','2AS2','3AS1','3AS2','4AS1','4AS2','5AS1','5AS2'];
 $jours   = ['Sunday','Monday','Tuesday','Wednesday','Thursday'];
 $heures  = [
     ['08:00','09:00'],['09:00','10:00'],['10:00','11:00'],
@@ -76,7 +76,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
         }
         .class-tab.active, .class-tab:hover { background: #0f1f3d; color: #f5c842; border-color: #0f1f3d; }
 
-        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.07); margin-bottom: 30px;}
         th { background: #0f1f3d; color: #f5c842; padding: 12px; font-size: 13px; }
         td { padding: 10px; font-size: 13px; text-align: center; border: 1px solid #e2e8f0; color: #1a2540; }
         tr:hover td { background: #f8fafc; }
@@ -107,8 +107,8 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
 <body>
     <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
     <nav>
-        <a href="HomePfe.html" class="logo"></a>
-        <p style="color:rgb(131,131,131);font-size:10px;">Platforme Scolaire</p>
+        <a href="index.html" class="logo"></a>
+        <p style="color:rgb(131,131,131);font-size:10px;">School Platform</p>
         <ul>
             <div style="color:#fff;font-size:17px;">
                 👤 <?= htmlspecialchars($_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name']) ?>
@@ -118,6 +118,8 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
             <li><a href="admin_users.php">👥 Users</a></li>
             <li><a href="admin_timetable.php" style="color:#f5c842;">🕐 Timetable</a></li>
             <li><a href="admin_inscriptions.php">📋 Inscriptions</a></li>
+            <li><a href="admin_statistics.php">📊 Statistics</a></li>
+            <li><a href="admin_analysis.php">🔍 Analysis</a></li>
             <li><a href="login.php" style="color:#ff6b6b;">🚪 Logout</a></li>
         </ul>
     </nav>
@@ -146,8 +148,9 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
         </div>
 
         <!-- جدول الحصص -->
-        <div style="overflow-x:auto;">
-        <table>
+        <div style="overflow-x:auto; width:100%;">
+
+        <table style="min-width:490px;" >
             <tr>
                 <th>Time</th>
                 <?php foreach ($jours as $j): ?><th><?= $j ?></th><?php endforeach; ?>
@@ -171,6 +174,7 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
                 <?php endforeach; ?>
             </tr>
             <?php endforeach; ?>
+            
         </table>
         </div>
 
