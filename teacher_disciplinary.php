@@ -8,7 +8,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'enseignant') {
 $teacher_name = $_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name'];
 $success = $error = "";
 
-// ── إضافة سجل ──
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add') {
     $child_id    = (int)$_POST['child_id'];
     $date_inc    = $_POST['date_inc'];
@@ -24,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add')
     }
 }
 
-// ── تعديل سجل ──
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit') {
     $id          = (int)$_POST['record_id'];
     $date_inc    = $_POST['date_inc'];
@@ -36,13 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit'
     $success = "✅ Enregistrement modifié!";
 }
 
-// ── حذف سجل ──
 if (isset($_GET['delete'])) {
     $pdo->prepare("DELETE FROM disciplinary WHERE id=?")->execute([(int)$_GET['delete']]);
     $success = "✅ Record deleted.";
 }
 
-// ── جلب الأقسام من children مباشرة مع TRIM ──
+
 $stmt = $pdo->query("
     SELECT DISTINCT TRIM(classe) as classe 
     FROM children 
@@ -53,11 +50,11 @@ $stmt = $pdo->query("
 ");
 $classes = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-// ── القسم والطالب المختاران ──
+
 $selected_classe = isset($_GET['classe']) ? trim($_GET['classe']) : ($classes[0] ?? '');
 $selected_child  = $_GET['child_id'] ?? null;
 
-// ── جلب الطلاب حسب القسم ──
+
 $students = [];
 if ($selected_classe) {
     $stmt = $pdo->prepare("
@@ -74,7 +71,7 @@ if ($selected_classe) {
     }
 }
 
-// ── جلب السجلات ──
+
 $records = [];
 if ($selected_child) {
     $stmt = $pdo->prepare("SELECT * FROM disciplinary WHERE child_id=? ORDER BY date_inc DESC");
@@ -202,7 +199,6 @@ if ($selected_child) {
             <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
-        <!-- اختيار القسم -->
         <p style="font-size:13px;color:#555;margin-bottom:8px;font-weight:500;">Select Class:</p>
         <div class="tabs">
             <?php foreach ($classes as $c): ?>
@@ -213,7 +209,6 @@ if ($selected_child) {
             <?php endforeach; ?>
         </div>
 
-        <!-- اختيار الطالب -->
         <?php if (!empty($students)): ?>
         <p style="font-size:13px;color:#555;margin-bottom:8px;font-weight:500;">Select Student:</p>
         <div class="tabs" style="margin-bottom:24px;">
@@ -228,7 +223,6 @@ if ($selected_child) {
 
         <?php if ($selected_child): ?>
 
-        <!-- فورم إضافة سجل -->
         <div class="add-card">
             <h3>➕ Add a record</h3>
             <form method="POST">
@@ -258,7 +252,6 @@ if ($selected_child) {
             </form>
         </div>
 
-        <!-- عرض السجلات -->
         <?php if (empty($records)): ?>
             <div class="empty-msg">
                 <i class="fas fa-star"></i>
@@ -297,7 +290,6 @@ if ($selected_child) {
         <?php endif; ?>
     </div>
 
-    <!-- Modal Edit -->
     <div class="modal-bg" id="editModal">
         <div class="modal">
             <h3>✏️ Modifier l'enregistrement</h3>
