@@ -79,15 +79,14 @@ if ($selected_child) {
 <body>
     <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
     <nav>
-        <a href="HomePfe.html" class="logo"></a>
-        <p style="color:rgb(131,131,131);font-size:10px;">Platforme Scolaire</p>
+        <a href="index.html" class="logo"></a>
+        <p style="color:rgb(131,131,131);font-size:10px;">School Platform</p>
         <ul>
             <div class="parent" style="color:#fff; font-size:17px">
                 <?= htmlspecialchars($_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name']) ?>
             </div><br>
-            <p style="color:rgb(131,131,131);font-size:10px;">Suivi Scolaire:</p>
-        <li><a href="dashboard.php" >🏠 Dashboard</a></li>
-
+            <p style="color:rgb(131,131,131);font-size:10px;">Academic Monitoring:</p>
+            <li><a href="dashboard.php" >🏠 Dashboard</a></li>
             <li><a href="grades.php">📊 Grades & Reports</a></li>
             <li><a href="absences.php" style="color:#f5c842;">📅 Absences</a></li>
             <li><a href="disciplinary.php">⚠️ Disciplinary Records</a></li>
