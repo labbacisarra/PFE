@@ -23,7 +23,7 @@
             flex-shrink: 0; 
             border-radius: 50%;
             border: 2px solid gold;
-            background: url(Ecolna.jpg) center/cover no-repeat;
+            background: url(pics/Ecolna.jpg) center/cover no-repeat;
             filter: drop-shadow(0 0 10px rgba(142, 140, 78, 0.3));
             transition: transform 0.3s ease;
             display: flex;
