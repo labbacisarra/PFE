@@ -8,7 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="HomePfe.css">
     <style>
-        /* ── PAGE HERO ── */
+
+        
         nav{
         background: linear-gradient(to left, #87b5e1, #b8dade) !important;}
             .courses-hero {
@@ -30,7 +31,6 @@
             margin: 0 auto 30px;
         }
 
-        /* ── SEARCH & FILTER ── */
         .filter-bar {
             display: flex;
             gap: 14px;
@@ -73,7 +73,6 @@
             font-weight: 600;
         }
 
-        /* ── COURSES GRID ── */
         .courses-section {
             padding: 60px 60px;
         }
@@ -170,7 +169,6 @@
         }
         .btn-enroll:hover { opacity: 0.85; }
 
-        /* ── NO RESULTS ── */
         .no-results {
             text-align: center;
             padding: 60px;
@@ -179,7 +177,6 @@
         }
         .no-results i { font-size: 3rem; display: block; margin-bottom: 14px; color: #f5c842; }
 
-        /* ── RESPONSIVE ── */
         @media (max-width: 768px) {
             .courses-hero { padding: 80px 24px 40px; }
             .courses-hero h1 { font-size: 32px; }
@@ -402,7 +399,7 @@
     <div class="letters-container" id="lettersContainer"></div>
 
     <script>
-        // ── FILTER BY TAG ──
+
         let currentTag = 'all';
 
         function filterByTag(tag, btn) {
@@ -430,7 +427,7 @@
             document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
         }
 
-        // ── LETTERS ──
+
         const letters = ['أ','ب','ت','ج','ح','د','ر','س','ش','ع','ف','ق','ك','ل','م','ن','و','ي','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
         const colors  = ['#f5c842','#ef5350','#66bb6a','#7986cb','#29b6f6','#ff7043'];
         const container = document.getElementById('lettersContainer');
@@ -451,7 +448,7 @@
         for (let i = 0; i < 15; i++) createLetter();
         setInterval(createLetter, 900);
 
-        // ── HAMBURGER ──
+
         const hamburger = document.getElementById('hamburger');
         const nav = document.querySelector('nav');
         hamburger.addEventListener('click', () => {
