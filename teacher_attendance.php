@@ -7,7 +7,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'enseignant') {
 $teacher_name = $_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name'];
 $success = $error = '';
 
-// ── حفظ الغيابات ──
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
     $classe   = trim($_POST['classe']);
     $date_abs = trim($_POST['date_abs']);
@@ -27,13 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save'])) {
     $success = '✅ Attendance saved!';
 }
 
-// ── الأقسام ──
 $classes = $pdo->query("SELECT DISTINCT TRIM(classe) as classe FROM children WHERE status='active' AND classe IS NOT NULL AND classe!='' ORDER BY classe")->fetchAll(PDO::FETCH_COLUMN);
 
 $selectedClass = trim($_GET['classe'] ?? $_POST['classe'] ?? '');
 $selectedDate  = $_GET['date'] ?? $_POST['date_abs'] ?? date('Y-m-d');
 
-// ── الطلاب ──
 $students    = [];
 $absencesMap = [];
 if ($selectedClass) {
@@ -75,7 +72,6 @@ function getStatus($id, $map) {
         .alert-success { background: rgba(40,167,69,0.15); color: #155724; border: 1px solid rgba(40,167,69,0.3); }
         .alert-error   { background: rgba(220,53,69,0.15); color: #721c24; border: 1px solid rgba(220,53,69,0.3); }
 
-        /* Controls */
         .controls {
             display: flex; gap: 14px; flex-wrap: wrap;
             align-items: flex-end; margin-bottom: 24px;
@@ -95,7 +91,6 @@ function getStatus($id, $map) {
         }
         .btn-load:hover { opacity: 0.85; }
 
-        /* Stats */
         .stats-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
         .stat-pill {
             display: flex; align-items: center; gap: 10px;
@@ -106,14 +101,12 @@ function getStatus($id, $map) {
         .stat-pill strong { font-size: 1.4rem; color: #1a1a2e; display: block; }
         .stat-pill span   { font-size: 12px; color: #888; }
 
-        /* Panel */
         .panel {
             background: #fff; border-radius: 16px; padding: 24px;
             box-shadow: 0 2px 14px rgba(0,0,0,0.07); margin-bottom: 24px;
         }
         .panel h3 { font-size: 16px; color: #1a1a2e; margin-bottom: 20px; }
 
-        /* Mark all */
         .mark-all {
             display: flex; gap: 8px; align-items: center;
             margin-bottom: 16px; padding-bottom: 16px;
@@ -127,7 +120,6 @@ function getStatus($id, $map) {
         }
         .btn-ma:hover { border-color: #1a1a2e; color: #1a1a2e; }
 
-        /* Student row */
         .s-row {
             display: flex; align-items: center; gap: 14px;
             padding: 12px 8px; border-bottom: 1px solid #f5f5f5;
@@ -143,7 +135,6 @@ function getStatus($id, $map) {
         }
         .s-name { font-size: 14px; font-weight: 600; color: #1a1a2e; flex: 1; }
 
-        /* Toggle buttons */
         .toggle { display: flex; gap: 6px; }
         .tog {
             padding: 7px 14px; border-radius: 20px;
@@ -163,13 +154,11 @@ function getStatus($id, $map) {
         }
         .s-motif:focus { border-color: #f5c842; }
 
-        /* Empty */
         .empty {
             text-align: center; padding: 50px; color: #aaa;
         }
         .empty i { font-size: 3rem; display: block; margin-bottom: 12px; }
 
-        /* Save row */
         .save-row { display: flex; justify-content: flex-end; gap: 12px; }
         .btn-save {
             padding: 12px 32px; background: #f5c842; color: #1a1a2e;
@@ -218,7 +207,7 @@ function getStatus($id, $map) {
         <div class="alert alert-error"><?= $error ?></div>
     <?php endif; ?>
 
-    <!-- اختيار القسم والتاريخ -->
+
     <form method="GET">
         <div class="controls">
             <div class="ctrl-group">
@@ -253,7 +242,6 @@ function getStatus($id, $map) {
         $present = $total - $absent - $justified;
     ?>
 
-    <!-- Stats -->
     <div class="stats-row">
         <div class="stat-pill">
             <div>👥<strong id="c-total"><?= $total ?></strong><span>Total</span></div>
@@ -269,7 +257,6 @@ function getStatus($id, $map) {
         </div>
     </div>
 
-    <!-- فورم الغيابات -->
     <form method="POST">
         <input type="hidden" name="save" value="1">
         <input type="hidden" name="classe"   value="<?= htmlspecialchars($selectedClass) ?>">
