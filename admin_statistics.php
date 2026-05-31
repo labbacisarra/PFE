@@ -5,7 +5,6 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
     header("Location: login.php"); exit;
 }
 
-// ── إحصائيات عامة ──
 $total_users    = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
 $total_parents  = $pdo->query("SELECT COUNT(*) FROM users WHERE role='parent'")->fetchColumn();
 $total_teachers = $pdo->query("SELECT COUNT(*) FROM users WHERE role='enseignant'")->fetchColumn();
@@ -14,7 +13,6 @@ $total_absences = $pdo->query("SELECT COUNT(*) FROM absences")->fetchColumn();
 $total_grades   = $pdo->query("SELECT COUNT(*) FROM grades")->fetchColumn();
 $pending        = $pdo->query("SELECT COUNT(*) FROM children WHERE status='pending'")->fetchColumn();
 
-// ── طلاب حسب القسم ──
 $by_classe = $pdo->query("
     SELECT classe, COUNT(*) as total 
     FROM children 
@@ -23,7 +21,7 @@ $by_classe = $pdo->query("
     ORDER BY classe
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// ── غيابات حسب القسم ──
+
 $absences_by_classe = $pdo->query("
     SELECT c.classe, COUNT(a.id) as total
     FROM absences a
@@ -33,7 +31,7 @@ $absences_by_classe = $pdo->query("
     ORDER BY total DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// ── أعلى 5 طلاب غياباً ──
+
 $top_absences = $pdo->query("
     SELECT c.child_name, c.classe, COUNT(a.id) as total
     FROM absences a
@@ -43,7 +41,7 @@ $top_absences = $pdo->query("
     LIMIT 5
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// ── معدل النقاط حسب المادة ──
+
 $avg_by_matiere = $pdo->query("
     SELECT matiere, ROUND(AVG(note),2) as avg_note, COUNT(*) as total
     FROM grades
@@ -159,7 +157,7 @@ $avg_by_matiere = $pdo->query("
         <p>Overview of all school data and performance indicators.</p>
     </div>
 
-    <!-- Stats Cards -->
+
     <div class="stats-grid">
         <div class="stat-card">
             <i class="fas fa-users"></i>
@@ -198,7 +196,7 @@ $avg_by_matiere = $pdo->query("
         </div>
     </div>
 
-    <!-- Charts -->
+
     <div class="charts-grid">
         <div class="chart-card">
             <h3>🏫 Students per Class</h3>
@@ -218,7 +216,7 @@ $avg_by_matiere = $pdo->query("
         </div>
     </div>
 
-    <!-- Top Absences Table -->
+
     <div class="section-title">⚠️ Top 5 Students with Most Absences</div>
     <table style="margin-bottom:32px;">
         <tr>
@@ -241,7 +239,7 @@ $avg_by_matiere = $pdo->query("
         <?php endforeach; ?>
     </table>
 
-    <!-- Average by Subject Table -->
+
     <div class="section-title">📚 Average Grade per Subject</div>
     <table>
         <tr>
@@ -272,7 +270,7 @@ $avg_by_matiere = $pdo->query("
 </div>
 
 <script>
-// Students per Class
+
 const classeLabels = <?= json_encode(array_column($by_classe, 'classe')) ?>;
 const classeData   = <?= json_encode(array_column($by_classe, 'total')) ?>;
 new Chart(document.getElementById('classeChart'), {
@@ -285,7 +283,7 @@ new Chart(document.getElementById('classeChart'), {
     options: { responsive: true, plugins: { legend: { display: false } } }
 });
 
-// Absences per Class
+
 const absLabels = <?= json_encode(array_column($absences_by_classe, 'classe')) ?>;
 const absData   = <?= json_encode(array_column($absences_by_classe, 'total')) ?>;
 new Chart(document.getElementById('absenceChart'), {
@@ -298,7 +296,7 @@ new Chart(document.getElementById('absenceChart'), {
     options: { responsive: true, plugins: { legend: { display: false } } }
 });
 
-// Average per Subject
+
 const matLabels = <?= json_encode(array_column($avg_by_matiere, 'matiere')) ?>;
 const matData   = <?= json_encode(array_column($avg_by_matiere, 'avg_note')) ?>;
 new Chart(document.getElementById('matiereChart'), {
@@ -312,7 +310,7 @@ new Chart(document.getElementById('matiereChart'), {
         scales: { x: { max: 10 } } }
 });
 
-// User Distribution
+
 new Chart(document.getElementById('userChart'), {
     type: 'doughnut',
     data: {
@@ -323,7 +321,7 @@ new Chart(document.getElementById('userChart'), {
     options: { responsive: true }
 });
 
-// Hamburger
+
 const hamburger = document.getElementById('hamburger');
 const nav = document.querySelector('nav');
 hamburger.addEventListener('click', () => {
