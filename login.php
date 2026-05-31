@@ -10,17 +10,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($_POST['password']);
     $action   = $_POST['action'];
     
-    // ── LOGIN ──
     if ($action === 'login') {
         $selected_role = $_POST['selected_role'] ?? 'parent';
 
-        // جلب المستخدم بالإيميل فقط
         $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($user) {
-            // تحقق من كلمة المرور — plain text أو hashed
             $passwordOk = ($password === $user['password']) || 
                           password_verify($password, $user['password']);
 
@@ -43,7 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
     
-    // ── REGISTER ──
     if ($action === 'register') {
         $first_name = trim($_POST['first_name']);
         $last_name  = trim($_POST['last_name']);
@@ -146,7 +142,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <main class="auth-main">
             <div class="auth-wrapper">
 
-                <!-- LEFT SIDE -->
                 <div class="auth-side">
                     <span class="hero-badge">⭐️ Welcome to ECOLNA</span>
                     <h2>Stay Close to<br><span>Your Child's Journey</span></h2>
@@ -176,7 +171,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
 
-                <!-- RIGHT SIDE -->
                 <div class="auth-card">
 
                     <div class="auth-tabs">
@@ -195,7 +189,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     <?php endif; ?>
 
-                    <!-- ── LOGIN FORM ── -->
                     <div class="auth-panel active" id="panel-login">
                         <p class="panel-sub">Sign in to access your dashboard</p>
 
@@ -234,7 +227,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <p class="switch-text">No account yet? <a onclick="switchTab('register')">Register here</a></p>
                     </div>
 
-                    <!-- ── REGISTER FORM ── -->
                     <div class="auth-panel" id="panel-register">
                         <p class="panel-sub">Create your account and join the community</p>
 
@@ -302,7 +294,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </main>
 
-        <!-- FOOTER -->
         <div class="footer">
             <div class="footer-top">
                 <div class="footer-brand">
