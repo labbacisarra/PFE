@@ -6,15 +6,12 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'parent') {
 }
 $parent_id = $_SESSION['user']['id'];
 
-// جلب أولاد الولي المفعّلين فقط
 $stmt = $pdo->prepare("SELECT * FROM children WHERE parent_id = ? AND status = 'active'");
 $stmt->execute([$parent_id]);
 $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// الولد المختار
 $selected_child = $_GET['child_id'] ?? ($children[0]['id'] ?? null);
 
-// جلب النقاط
 $grades = [];
 if ($selected_child) {
     $stmt = $pdo->prepare("SELECT * FROM grades WHERE child_id = ? ORDER BY trimestre, matiere");
@@ -36,7 +33,6 @@ if ($selected_child) {
         .page-header h1 { font-size: 2rem; color: #1a1a2e; }
         .page-header p { color: #666; margin-top: 5px; }
 
-        /* Stats */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -65,7 +61,7 @@ if ($selected_child) {
         .stat-info strong { font-size: 1.4rem; color: #1a1a2e; display: block; line-height: 1.1; }
         .stat-info span   { font-size: 12px; color: #888; }
 
-        /* Child tabs */
+
         .child-tabs { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
         .child-tab {
             padding: 8px 20px; border-radius: 20px; border: 2px solid #e0e0e0;
@@ -77,7 +73,7 @@ if ($selected_child) {
             background: #1a1a2e; color: #f5c842; border-color: #1a1a2e;
         }
 
-        /* Trimestre */
+
         .trimestre-section { margin-bottom: 30px; }
         .trimestre-header {
             display: flex;
@@ -99,7 +95,7 @@ if ($selected_child) {
             font-weight: 700;
         }
 
-        /* Table */
+
         table {
             width: 100%; border-collapse: collapse; background: #fff;
             border-radius: 12px; overflow: hidden;
@@ -114,7 +110,7 @@ if ($selected_child) {
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: #f9f9f9; }
 
-        /* Progress bar */
+
         .progress-wrap { display: flex; align-items: center; gap: 10px; }
         .progress-bar {
             flex: 1; height: 8px; background: #e9ecef;
@@ -132,7 +128,7 @@ if ($selected_child) {
 
         .avg-row td { background: #f0f4ff; font-weight: 600; }
 
-        /* Empty */
+
         .empty-msg {
             text-align: center; padding: 60px; color: #999;
             background: #fff; border-radius: 12px;
@@ -141,7 +137,7 @@ if ($selected_child) {
         .empty-msg i { font-size: 3rem; margin-bottom: 15px; display: block; color: #f5c842; }
         .empty-msg h3 { color: #1a1a2e; margin-bottom: 8px; }
 
-        /* No children */
+
         .no-children {
             text-align: center; padding: 80px 40px;
             background: #fff; border-radius: 16px;
@@ -185,8 +181,8 @@ if ($selected_child) {
 
         <?php else: ?>
 
-            <!-- اختيار الولد -->
-            <?php if (count($children) > 1): ?>
+
+        <?php if (count($children) > 1): ?>
             <div class="child-tabs">
                 <?php foreach ($children as $child): ?>
                     <a href="?child_id=<?= $child['id'] ?>"
@@ -205,7 +201,7 @@ if ($selected_child) {
                 </div>
 
             <?php else:
-                // إحصائيات عامة
+
                 $all_notes   = array_column($grades, 'note');
                 $global_avg  = array_sum($all_notes) / count($all_notes);
                 $best        = max($all_notes);
@@ -213,8 +209,8 @@ if ($selected_child) {
                 $passed      = count(array_filter($all_notes, fn($n) => $n >= 5));
             ?>
 
-            <!-- Stats cards -->
-            <div class="stats-row">
+
+        <div class="stats-row">
                 <div class="stat-card">
                     <div class="stat-icon blue">📊</div>
                     <div class="stat-info">
@@ -248,7 +244,7 @@ if ($selected_child) {
             </div>
 
             <?php
-                // تقسيم حسب الفصل
+
                 $byTrimestre = [];
                 foreach ($grades as $g) {
                     $byTrimestre[$g['trimestre']][] = $g;
@@ -260,7 +256,6 @@ if ($selected_child) {
             ?>
                 <div class="trimestre-section">
 
-                    <!-- Header الفصل -->
                     <div class="trimestre-header">
                         <h3>📅 <?= htmlspecialchars($trimestre) ?></h3>
                         <span class="trimestre-avg">
@@ -300,7 +295,6 @@ if ($selected_child) {
                         </tr>
                         <?php endforeach; ?>
 
-                        <!-- صف المعدل -->
                         <tr class="avg-row">
                             <td>📌 Trimester Average</td>
                             <td><strong><?= number_format($avg, 2) ?></strong> / 10</td>
