@@ -192,16 +192,13 @@
     const nav = document.querySelector('nav');
 
     hamburger.addEventListener('click', () => {
-        // تبديل ظهور القائمة
         nav.classList.toggle('active');
 
-        // تغيير شكل الأيقونة من قضبان إلى X
         const icon = hamburger.querySelector('i');
         icon.classList.toggle('fa-bars');
         icon.classList.toggle('fa-times');
     });
 
-    // إغلاق القائمة عند الضغط على أي رابط داخلها
     document.querySelectorAll('nav ul li a').forEach(link => {
         link.addEventListener('click', () => {
             nav.classList.remove('active');
