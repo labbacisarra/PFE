@@ -114,7 +114,6 @@ if ($selected_child) {
         </div>
         <?php endif; ?>
 
-        <!-- إحصائيات -->
         <div class="stats-row">
             <div class="stat-card stat-total">
                 <div class="num"><?= $total ?></div>
