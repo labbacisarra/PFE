@@ -14,7 +14,6 @@ $heures = [
     ['11:00','12:00'],['14:00','15:00'],['15:00','16:00']
 ];
 
-// ── جلب أولاد الوالي المفعّلين ──
 $stmt = $pdo->prepare("
     SELECT * FROM children 
     WHERE parent_id = ? AND status = 'active' 
@@ -23,7 +22,6 @@ $stmt = $pdo->prepare("
 $stmt->execute([$parent_id]);
 $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// ── الولد المختار ──
 $selected_child_id = $_GET['child_id'] ?? ($children[0]['id'] ?? null);
 $selected_child    = null;
 foreach ($children as $c) {
@@ -33,7 +31,6 @@ foreach ($children as $c) {
     }
 }
 
-// ── جلب جدول الحصص حسب القسم ──
 $timetable = [];
 if ($selected_child && !empty($selected_child['classe'])) {
     $stmt = $pdo->prepare("
@@ -47,7 +44,6 @@ if ($selected_child && !empty($selected_child['classe'])) {
     }
 }
 
-// ألوان المواد
 $colors = [
     'Mathematics'     => '#dbeafe',
     'Arabic'          => '#fce7f3',
@@ -83,7 +79,6 @@ function getCouleur($matiere, $colors) {
         .page-header h1 { font-size: 2rem; color: #1a1a2e; }
         .page-header p  { color: #666; margin-top: 5px; font-size: 14px; }
 
-        /* Tabs enfants */
         .child-tabs { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
         .child-tab {
             display: flex; align-items: center; gap: 8px;
@@ -97,7 +92,6 @@ function getCouleur($matiere, $colors) {
             background: #1a1a2e; color: #f5c842; border-color: #1a1a2e;
         }
 
-        /* Info card */
         .info-card {
             background: linear-gradient(135deg, #1a1a2e, #2d2d5e);
             border-radius: 16px; padding: 20px 24px;
@@ -122,7 +116,6 @@ function getCouleur($matiere, $colors) {
             font-weight: 700; font-size: 15px;
         }
 
-        /* Timetable */
         .table-wrapper { overflow-x: auto; border-radius: 14px; box-shadow: 0 2px 14px rgba(0,0,0,0.08); }
         table {
             width: 100%; border-collapse: collapse;
@@ -154,7 +147,6 @@ function getCouleur($matiere, $colors) {
         tbody tr:hover td { background: #f8fafc; }
         tbody tr:hover td.subject-cell { filter: brightness(0.96); }
 
-        /* Empty state */
         .empty-msg {
             text-align: center; padding: 60px 40px;
             background: #fff; border-radius: 14px;
@@ -163,7 +155,6 @@ function getCouleur($matiere, $colors) {
         .empty-msg i { font-size: 3.5rem; display: block; margin-bottom: 16px; color: #f5c842; }
         .empty-msg h3 { color: #1a1a2e; margin-bottom: 8px; }
 
-        /* No children */
         .no-children {
             text-align: center; padding: 80px 40px;
             background: #fff; border-radius: 16px;
@@ -210,7 +201,6 @@ function getCouleur($matiere, $colors) {
 
     <?php else: ?>
 
-        <!-- Tabs enfants -->
         <?php if (count($children) > 1): ?>
         <div class="child-tabs">
             <?php foreach ($children as $child): ?>
@@ -224,7 +214,6 @@ function getCouleur($matiere, $colors) {
 
         <?php if ($selected_child): ?>
 
-        <!-- Info card -->
         <div class="info-card">
             <div class="avatar">👦</div>
             <div>
@@ -243,7 +232,6 @@ function getCouleur($matiere, $colors) {
             </div>
         </div>
 
-        <!-- Timetable -->
         <?php if (empty($timetable)): ?>
             <div class="empty-msg">
                 <i class="fas fa-calendar-times"></i>
