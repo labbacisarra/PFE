@@ -9,7 +9,9 @@
     <link rel="stylesheet" href="HomePfe.css">
     <style>
         /* ── PAGE HERO ── */
-        .courses-hero {
+        nav{
+        background: linear-gradient(to left, #87b5e1, #b8dade) !important;}
+            .courses-hero {
             background: linear-gradient(135deg, rgba(15,31,61,0.85), rgba(0,150,224,0.5)),
                         url('heros.png') center/cover no-repeat;
             padding: 100px 60px 60px;
@@ -190,14 +192,24 @@
 <body>
 
     <div class="org" style="height:auto;background-image:none;background:transparent;">
+
         <nav>
+
             <a href="index.html" class="logo"></a>
             <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
+
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="courses.html" style="color:#f5c842;">Student/Courses</a></li>
-                <li><a href="#">Language</a></li>
                 <li><a href="contact.php">Contact</a></li>
+                    <li>
+                        <select id="language-select" onchange="changeLanguage(this.value)" style="color:#fff;">
+                            <option value="">Language</option>
+                            <option value="">English</option>
+                            <option value="en">French</option>
+                            <option value="ar">Arabic</option>
+                        </select>
+                    </li>      
                 <li><a href="login.php"><i class="fa fa-user"></i> Log In</a></li>
             </ul>
         </nav>
@@ -235,14 +247,14 @@
                 <div class="course-thumb thumb-math">📐</div>
                 <div class="course-body">
                     <span class="course-tag">Mathematics</span>
-                    <div class="course-title">Algebra & Functions</div>
+                    <div class="course-title">Mathematics</div>
                     <div class="course-desc">Master algebraic equations, functions, and graphs from basic to advanced level.</div>
                     <div class="course-meta">
                         <span><i class="fas fa-clock"></i> 24 hours</span>
                         <span><i class="fas fa-users"></i> 320 students</span>
                         <span><i class="fas fa-star"></i> 4.8</span>
                     </div>
-                    <button class="btn-enroll" onclick="location.href='login.php'">Enroll Now →</button>
+                    <button class="btn-enroll" onclick="location.href='login.php'">View Syllabus→</button>
                 </div>
             </div>
 
@@ -257,7 +269,7 @@
                         <span><i class="fas fa-users"></i> 420 students</span>
                         <span><i class="fas fa-star"></i> 4.8</span>
                     </div>
-                    <button class="btn-enroll" onclick="location.href='login.php'">Enroll Now →</button>
+                    <button class="btn-enroll" onclick="location.href='login.php'">View Syllabus→</button>
                 </div>
             </div>
 
@@ -272,7 +284,7 @@
                         <span><i class="fas fa-users"></i> 350 students</span>
                         <span><i class="fas fa-star"></i> 4.9</span>
                     </div>
-                    <button class="btn-enroll" onclick="location.href='login.php'">Enroll Now →</button>
+                    <button class="btn-enroll" onclick="location.href='login.php'">View Syllabus→</button>
                 </div>
             </div>
 
@@ -287,7 +299,7 @@
                         <span><i class="fas fa-users"></i> 380 students</span>
                         <span><i class="fas fa-star"></i> 4.9</span>
                     </div>
-                    <button class="btn-enroll" onclick="location.href='login.php'">Enroll Now →</button>
+                    <button class="btn-enroll" onclick="location.href='login.php'">View Syllabus→</button>
                 </div>
             </div>
 
@@ -302,7 +314,7 @@
                         <span><i class="fas fa-users"></i> 240 students</span>
                         <span><i class="fas fa-star"></i> 4.7</span>
                     </div>
-                    <button class="btn-enroll" onclick="location.href='login.php'">Enroll Now →</button>
+                    <button class="btn-enroll" onclick="location.href='login.php'">View Syllabus→</button>
                 </div>
             </div>
 
@@ -317,7 +329,7 @@
                         <span><i class="fas fa-users"></i> 180 students</span>
                         <span><i class="fas fa-star"></i> 4.5</span>
                     </div>
-                    <button class="btn-enroll" onclick="location.href='login.php'">Enroll Now →</button>
+                    <button class="btn-enroll" onclick="location.href='login.php'">View Syllabus→</button>
                 </div>
             </div>
 
@@ -332,7 +344,7 @@
                         <span><i class="fas fa-users"></i> 310 students</span>
                         <span><i class="fas fa-star"></i> 4.9</span>
                     </div>
-                    <button class="btn-enroll" onclick="location.href='login.php'">Enroll Now →</button>
+                    <button class="btn-enroll" onclick="location.href='login.php'">View Syllabus→</button>
                 </div>
             </div>
 
@@ -347,7 +359,7 @@
                         <span><i class="fas fa-users"></i> 400 students</span>
                         <span><i class="fas fa-star"></i> 4.8</span>
                     </div>
-                    <button class="btn-enroll" onclick="location.href='login.php'">Enroll Now →</button>
+                    <button class="btn-enroll" onclick="location.href='login.php'">View Syllabus→</button>
                 </div>
             </div>
 
@@ -369,9 +381,16 @@
                 <h4>Navigation</h4>
                 <ol>
                     <li><a href="index.html">Home</a></li>
-                    <li><a href="courses.html">Student / Courses</a></li>
-                    <li><a href="#">Language</a></li>
+                    <li><a href="courses.php">Student / Courses</a></li>
                     <li><a href="contact.php">Contact</a></li>
+                    <li>
+                        <select id="language-select" onchange="changeLanguage(this.value)" style="color:#000;">
+                            <option value="">Language</option>
+                            <option value="">English</option>
+                            <option value="en">French</option>
+                            <option value="ar">Arabic</option>
+                        </select>
+                    </li>      
                 </ol>
             </div>
         </div>
