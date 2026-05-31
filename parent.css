@@ -15,13 +15,12 @@
 
         }
  
-        /* ── LOGO ── */
         .logo {
             width: 80px;
             height: 80px;
-            min-width: 80px; /* فرض حد أدنى للعرض */
-            min-height: 80px; /* فرض حد أدنى للارتفاع */
-            flex-shrink: 0; /* منع الـ Flexbox من ضغط اللوغو تماماً */
+            min-width: 80px; 
+            min-height: 80px; 
+            flex-shrink: 0; 
             border-radius: 50%;
             border: 2px solid gold;
             background: url(Ecolna.jpg) center/cover no-repeat;
@@ -37,7 +36,6 @@
             transform: scale(1.1);
         }
  
-        /* ── NAV ── */
 
         nav {
             display: flex;
@@ -52,7 +50,7 @@
             left: 0;
             border-right: 2px solid #f5c842;
             min-height: 100vh;
-            overflow-y: auto; /* يسمح بالنزول داخل القائمة إذا كانت طويلة بلا ما تخرب الواجهة */
+            overflow-y: auto; 
 
         }
         nav ul {
@@ -92,7 +90,6 @@
             width: 100%;
         }
  
-        /* ── HAMBURGER ── */
         .hamburger {
             display: none ;
             cursor: pointer;
@@ -100,7 +97,6 @@
             color: #fff !important
         }
  
-        /* ── CONTAINER ── */
         .container {
             margin-left: 22%;
             padding: 30px;
@@ -117,7 +113,6 @@
             margin-bottom: 24px;
         }
  
-        /* ── TABLE ── */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -150,7 +145,6 @@
             background: #f8fafc;
         }
  
-        /* ── MOBILE ── */
         @media (max-width: 610px) {
             nav {
                 left: -100%;
