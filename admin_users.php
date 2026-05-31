@@ -125,8 +125,8 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
     <nav>
-        <a href="HomePfe.html" class="logo"></a>
-        <p style="color:rgb(131,131,131);font-size:10px;">Platforme Scolaire</p>
+        <a href="index.html" class="logo"></a>
+        <p style="color:rgb(131,131,131);font-size:10px;">School Platform</p>
         <ul>
             <div style="color:#fff;font-size:17px;">
                 👤 <?= htmlspecialchars($_SESSION['user']['first_name'] . ' ' . $_SESSION['user']['last_name']) ?>
@@ -136,6 +136,8 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <li><a href="admin_users.php" style="color:#f5c842;">👥 Users</a></li>
             <li><a href="admin_timetable.php">🕐 Timetable</a></li>
             <li><a href="admin_inscriptions.php">📋 Inscriptions</a></li>
+            <li><a href="admin_statistics.php">📊 Statistics</a></li>
+            <li><a href="admin_analysis.php">🔍 Analysis</a></li>
             <li><a href="login.php" style="color:#ff6b6b;">🚪 Logout</a></li>
         </ul>
     </nav>
@@ -170,7 +172,6 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <table>
             <tr>
-                <th>#</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
@@ -180,7 +181,6 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </tr>
             <?php foreach ($users as $u): ?>
             <tr>
-                <td><?= $u['id'] ?></td>
                 <td><?= htmlspecialchars($u['first_name']) ?></td>
                 <td><?= htmlspecialchars($u['last_name']) ?></td>
                 <td><?= htmlspecialchars($u['email']) ?></td>
