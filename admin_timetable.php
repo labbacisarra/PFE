@@ -13,7 +13,6 @@ $heures  = [
     ['11:00','12:00'],['14:00','15:00'],['15:00','16:00']
 ];
 
-// ── إضافة حصة ──
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add') {
     $classe     = $_POST['classe'];
     $jour       = $_POST['jour'];
@@ -22,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add')
     $matiere    = trim($_POST['matiere']);
     $enseignant = trim($_POST['enseignant'] ?? '');
 
-    // تحقق إذا الحصة مشغولة
     $check = $pdo->prepare("SELECT id FROM emploi_temps WHERE classe=? AND jour=? AND heure_debut=?");
     $check->execute([$classe, $jour, $heure_debut]);
     if ($check->fetch()) {
@@ -34,7 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add')
     }
 }
 
-// ── حذف حصة ──
 if (isset($_GET['delete'])) {
     $pdo->prepare("DELETE FROM emploi_temps WHERE id=?")->execute([(int)$_GET['delete']]);
     $success = "✅ Slot deleted.";
@@ -137,7 +134,6 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
             <div class="alert alert-error"><?= $error ?></div>
         <?php endif; ?>
 
-        <!-- اختيار القسم -->
         <div class="class-tabs">
             <?php foreach ($classes as $c): ?>
                 <a href="?classe=<?= $c ?>"
@@ -147,7 +143,6 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
             <?php endforeach; ?>
         </div>
 
-        <!-- جدول الحصص -->
         <div style="overflow-x:auto; width:100%;">
 
         <table style="min-width:490px;" >
@@ -178,7 +173,6 @@ foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
         </table>
         </div>
 
-        <!-- فورم إضافة حصة -->
         <div class="add-card">
             <h3>➕ Add New Slot</h3>
             <form method="POST">
