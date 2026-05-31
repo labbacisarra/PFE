@@ -134,9 +134,9 @@ nav ul li a:hover::after {
 
 }
 #language-select{
-background: transparent;   /* تنحي الخلفية البيضا */
-    border: none;              /* تنحي الإطار المربع القديم */
-    color: #ffffff;            /* ترجع الكتيبة بيضا */
+background: transparent;   
+    border: none;             
+    color: #ffffff;          
     font-family: 'Outfit', sans-serif;
     font-size: 15px;
     cursor: pointer;
@@ -410,7 +410,6 @@ background: transparent;   /* تنحي الخلفية البيضا */
 
 
 
-/* ── MOBILE ── */
 
 @media (max-width: 610px) {
 
