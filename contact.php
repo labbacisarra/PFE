@@ -26,8 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="login.css">
     <style>
+        body {
+            background: linear-gradient(135deg, #0f1f3d 0%, #1a3a6b 100%);
+        }
 
-
+        
         /* ── MAIN CONTENT ── */
         .contact-main {
             display: flex;
@@ -148,28 +151,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             font-size: 13px;
             color: #555;
             font-weight: 500;
-            
         }
 
-        .form-field input,.form-field textarea {
+        .form-field input,
+        .form-field textarea {
             padding: 12px 16px;
-            border: 1.5px solid #858080;
+    border: 1.5px solid #858080 !important;
             border-radius: 12px;
             font-family: 'Outfit', sans-serif;
             font-size: 14px;
             outline: none;
             transition: border 0.2s;
-            color: #1a1a2e;
+            color: black !important;
             width: 100%;
         }
-
-        .form-field input:focus,
-        .form-field textarea:focus {
-            border-color: #f5c842;
+        .form-field input::placeholder{
+            color:#1a1a2e !important;
+        }
+        .form-field input:focus,.form-field textarea:focus {
+            border-color: #f5c842 !important;
         }
 
-        .form-field textarea { resize: vertical; min-height: 120px; }
 
+        .form-field textarea { resize: vertical; min-height: 120px; }
+        .form-field placeholder{
+            color:blue;
+        }
         .btn-send {
             width: 100%;
             padding: 13px;
@@ -207,14 +214,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <!-- NAVBAR -->
 <nav>
     <a href="index.html" class="logo"></a>
-        <div class="hamburger" id="hamburger">
+    <div class="hamburger" id="hamburger">
          <i class="fa fa-bars" ></i> </div>
-
     <ul>
         <li><a href="index.html">Home</a></li>
-        <li><a href="#">About</a></li>
+        <li><a href="courses.php">Student / Courses</a></li>
         <li><a href="contact.php">Contact</a></li>
-        <li><a href="login.php"><i class="fa fa-user"></i> Login</a></li>
+            <li>
+                    <select id="language-select"onchange="changeLanguage(this.value)">
+                        <option value="">Language</option>
+                        <option value="">English</option>
+                        <option value="en">French</option>
+                        <option value="ar">Arabic</option>
+                    </select>
+             </li> 
+        <li><a href="login.php"><i class="fa fa-user" style="color:#000;"></i> Login</a></li>
     </ul>
 </nav>
 
@@ -277,7 +291,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
                 <div class="form-field">
                     <label>Email Address</label>
-                    <input type="email" name="email" placeholder="ayoubiayoub018@gmail.com" required>
+                    <input type="email" name="email" placeholder="you@example.com" required>
                 </div>
                 <div class="form-field">
                     <label>Message</label>
@@ -291,29 +305,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     </div>
 </div>
-<script>
-    const hamburger = document.getElementById('hamburger');
-    const nav = document.querySelector('nav');
-
-    hamburger.addEventListener('click', () => {
-        // تبديل ظهور القائمة
-        nav.classList.toggle('active');
-
-        // تغيير شكل الأيقونة من قضبان إلى X
-        const icon = hamburger.querySelector('i');
-        icon.classList.toggle('fa-bars');
-        icon.classList.toggle('fa-times');
-    });
-
-    // إغلاق القائمة عند الضغط على أي رابط داخلها
-    document.querySelectorAll('nav ul li a').forEach(link => {
-        link.addEventListener('click', () => {
-            nav.classList.remove('active');
+    <script>
+           const hamburger = document.getElementById('hamburger');
+        const nav = document.querySelector('nav');
+        hamburger.addEventListener('click', () => {
+            nav.classList.toggle('active');
             const icon = hamburger.querySelector('i');
-            icon.classList.add('fa-bars');
-            icon.classList.remove('fa-times');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
         });
-    });
-</script>
+        document.querySelectorAll('nav ul li a').forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
+                const icon = hamburger.querySelector('i');
+                icon.classList.add('fa-bars');
+                icon.classList.remove('fa-times');
+            });
+        });
+    </script>
 </body>
 </html>
