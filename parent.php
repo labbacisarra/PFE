@@ -74,7 +74,7 @@ function getCouleur($matiere, $colors) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emploi du Temps — Parent</title>
+    <title>Timetable — Parent</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="parent.css">
@@ -177,13 +177,14 @@ function getCouleur($matiere, $colors) {
 <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
 
 <nav>
-    <a href="HomePfe.html" class="logo"></a>
-    <p style="color:rgb(131,131,131);font-size:10px;">Platforme Scolaire</p>
+    <a href="index.html" class="logo"></a>
+    <p style="color:rgb(131,131,131);font-size:10px;">School Platform</p>
     <ul>
         <div class="parent" style="color:#fff;font-size:17px;">
             <?= $parent_name ?>
         </div><br>
-        <p style="color:rgb(131,131,131);font-size:10px;">Suivi Scolaire:</p>
+        <p style="color:rgb(131,131,131);font-size:10px;">Academic Monitoring:</p>
+        <li><a href="dashboard.php">🏠 Dashboard</a></li>
         <li><a href="grades.php">📊 Grades & Reports</a></li>
         <li><a href="absences.php">📅 Absences</a></li>
         <li><a href="disciplinary.php">⚠️ Disciplinary Records</a></li>
@@ -196,8 +197,8 @@ function getCouleur($matiere, $colors) {
 <div class="container">
 
     <div class="page-header">
-        <h1>🕐 Emploi du Temps</h1>
-        <p>Consultez l'emploi du temps de votre enfant.</p>
+        <h1>🕐 Timetable</h1>
+        <p>Check your child’s timetable.</p>
     </div>
 
     <?php if (empty($children)): ?>
@@ -246,8 +247,8 @@ function getCouleur($matiere, $colors) {
         <?php if (empty($timetable)): ?>
             <div class="empty-msg">
                 <i class="fas fa-calendar-times"></i>
-                <h3>Aucun emploi du temps disponible</h3>
-                <p>L'administration n'a pas encore configuré l'emploi du temps pour la classe <strong><?= htmlspecialchars($selected_child['classe'] ?? '') ?></strong>.</p>
+                <h3>No timetable available</h3>
+                <p>he administration has not yet set up the timetable for the class <strong><?= htmlspecialchars($selected_child['classe'] ?? '') ?></strong>.</p>
             </div>
         <?php else: ?>
             <div class="table-wrapper">
