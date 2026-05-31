@@ -9,7 +9,6 @@ $parent_id   = $_SESSION['user']['id'];
 $first_name  = $_SESSION['user']['first_name'];
 $last_name   = $_SESSION['user']['last_name'];
 
-// Fetch children
 $stmt = $pdo->prepare("SELECT * FROM children WHERE parent_id = ? ORDER BY id");
 $stmt->execute([$parent_id]);
 $children = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -19,7 +18,6 @@ $active   = count(array_filter($children, fn($c) => $c['status'] === 'active'));
 $pending  = count(array_filter($children, fn($c) => $c['status'] === 'pending'));
 $rejected = count(array_filter($children, fn($c) => $c['status'] === 'rejected'));
 
-// Greeting by time
 $hour = (int)date('H');
 $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good Evening');
 ?>
@@ -33,7 +31,7 @@ $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="parent.css">
     <style>
-        /* ── Welcome Banner ── */
+
         .welcome-banner {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
             border-radius: 20px;
@@ -62,7 +60,7 @@ $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good
             border: 2px solid rgba(245,200,66,0.4);
         }
 
-        /* ── Stats Row ── */
+
         .stats-row {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -88,7 +86,7 @@ $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good
         .stat-info strong { font-size: 1.4rem; color: #1a1a2e; display: block; line-height: 1.1; }
         .stat-info span   { font-size: 11px; color: #888; }
 
-        /* ── Section Title ── */
+
         .section-title {
             font-size: 1.05rem; font-weight: 600; color: #0f1f3d;
             margin: 0 0 16px;
@@ -97,7 +95,7 @@ $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good
             border-bottom: 2px solid #f5c842;
         }
 
-        /* ── Quick Links ── */
+
         .quick-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -129,7 +127,7 @@ $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good
             font-size: 11px; color: #aaa; margin-top: 4px;
         }
 
-        /* ── Children Cards ── */
+
         .children-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -177,7 +175,7 @@ $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good
         }
         .child-action:hover { text-decoration: underline; }
 
-        /* ── Empty ── */
+
         .empty-msg {
             text-align: center; padding: 40px; color: #aaa;
             background: #fff; border-radius: 14px;
@@ -214,7 +212,7 @@ $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good
 
 <div class="container">
 
-    <!-- Welcome Banner -->
+
     <div class="welcome-banner">
         <div class="welcome-left">
             <h1><?= $greeting ?>, <span><?= htmlspecialchars($first_name) ?>!</span> 👋</h1>
@@ -227,7 +225,7 @@ $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good
         <div class="welcome-avatar">👨‍👩‍👧</div>
     </div>
 
-    <!-- Stats -->
+
     <div class="stats-row">
         <div class="stat-card">
             <div class="stat-icon total">👦</div>
@@ -259,7 +257,7 @@ $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good
         </div>
     </div>
 
-    <!-- Quick Links -->
+
     <div class="section-title">
         <i class="fas fa-bolt"></i> Quick Access
     </div>
@@ -291,7 +289,7 @@ $greeting = $hour < 12 ? 'Good Morning' : ($hour < 18 ? 'Good Afternoon' : 'Good
         </a>
     </div>
 
-    <!-- Children -->
+
     <div class="section-title">
         <i class="fas fa-users"></i> My Children
     </div>
