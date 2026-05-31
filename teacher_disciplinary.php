@@ -16,11 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add')
     $gravite     = $_POST['gravite'];
 
     if (empty($description)) {
-        $error = "❌ Veuillez remplir la description.";
+        $error = "❌ Please fill in the description.";
     } else {
         $pdo->prepare("INSERT INTO disciplinary (child_id, date_inc, description, gravite) VALUES (?,?,?,?)")
             ->execute([$child_id, $date_inc, $description, $gravite]);
-        $success = "✅ Enregistrement ajouté avec succès!";
+        $success = "✅ Record added successfully!";
     }
 }
 
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit'
 // ── حذف سجل ──
 if (isset($_GET['delete'])) {
     $pdo->prepare("DELETE FROM disciplinary WHERE id=?")->execute([(int)$_GET['delete']]);
-    $success = "✅ Enregistrement supprimé.";
+    $success = "✅ Record deleted.";
 }
 
 // ── جلب الأقسام من children مباشرة مع TRIM ──
@@ -175,10 +175,10 @@ if ($selected_child) {
 <body>
     <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
     <nav>
-        <a href="HomePfe.html" class="logo"></a>
-        <p style="color:rgb(131,131,131);font-size:10px;">Platforme Scolaire</p>
+        <a href="index.html" class="logo"></a>
+        <p style="color:rgb(131,131,131);font-size:10px;">School Platform</p>
         <ul>
-            <div style="color:#fff; font-size:17px;">👤 <?= htmlspecialchars($teacher_name) ?></div><br>
+            <div style="color:#fff; font-size:17px;">👨‍🏫 <?= htmlspecialchars($teacher_name) ?></div><br>
             <p style="color:rgb(131,131,131);font-size:10px;">Classroom:</p>
             <li><a href="enseignant.php">🏠 Dashboard</a></li>
             <li><a href="teacher_attendance.php">📅 Mark Attendance</a></li>
@@ -230,7 +230,7 @@ if ($selected_child) {
 
         <!-- فورم إضافة سجل -->
         <div class="add-card">
-            <h3>➕ Ajouter un enregistrement</h3>
+            <h3>➕ Add a record</h3>
             <form method="POST">
                 <input type="hidden" name="action" value="add">
                 <input type="hidden" name="child_id" value="<?= $selected_child ?>">
@@ -253,7 +253,7 @@ if ($selected_child) {
                     </div>
                 </div>
                 <button type="submit" class="btn-add">
-                    <i class="fas fa-plus"></i> Ajouter
+                    <i class="fas fa-plus"></i> Add
                 </button>
             </form>
         </div>
