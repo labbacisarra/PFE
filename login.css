@@ -30,21 +30,6 @@ body{
 }
 
 
-
-html[style*="invert(1)"] img,
-
-html[style*="invert(1)"] .logo,
-
-html[style*="invert(1)"] [style*="background-image"] {
-
-    filter: invert(1) hue-rotate(180deg);
-
-}
-
-html[style*="invert(1)"] { background-color: #000; }
-
-
-
 nav{ 
 
     display: flex;
@@ -148,6 +133,20 @@ nav ul li a:hover::after {
     width: 100%;
 
 }
+#language-select{
+background: transparent;   /* تنحي الخلفية البيضا */
+    border: none;              /* تنحي الإطار المربع القديم */
+    color: #ffffff;            /* ترجع الكتيبة بيضا */
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    outline: none;
+}
+#language-select option {
+    color: black;
+    background: white;
+}
+
 
 .hamburger { display: none; cursor: pointer; font-size: 25px; color: #fff; z-index: 101; 
 
@@ -161,7 +160,7 @@ nav ul li a:hover::after {
 
     border: 2px solid #f5c842;
 
-    background: url(pics/Ecolna.jpg) center/cover, no-repeat;
+    background: url(Ecolna.jpg) center/cover, no-repeat;
 
     filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
 
@@ -347,19 +346,19 @@ nav ul li a:hover::after {
 
 .footer { padding: 70px 60px 40px; border-top: 1px solid rgba(255,255,255,0.12); }
 
-.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; margin-bottom: 50px; }
+.footer-top { display: grid; grid-template-columns: 2fr 1fr; gap: 60px; margin-bottom: 50px; }
 
 .footer-brand h2 { font-family: 'Playfair Display', serif; font-size: 28px; color: #f5c842; margin-bottom: 14px; }
 
 .footer-brand p { font-size: 15px; line-height: 1.7; font-weight: 300; max-width: 320px; color: #ccc; }
 
-.footer-col h4 { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: black; margin-bottom: 20px; }
+.footer-col h4 { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: #f5c842; margin-bottom: 20px; }
 
 .footer-col ol { list-style: none; display: flex; flex-direction: column; gap: 12px; }
 
 .footer-col ol li a { text-decoration: none; font-size: 15px; font-weight: 300; color: #ccc; transition: color 0.3s; }
 
-.footer-col ol li a:hover { color: #fff; }
+.footer-col ol li a:hover {color:#f5c842; }
 
 .footer-bottom { border-top: 1px solid rgba(255,255,255,0.12); padding-top: 30px; text-align: center; font-size: 14px; color: #aaa; }
 
