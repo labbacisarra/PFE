@@ -14,32 +14,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'login') {
         $selected_role = $_POST['selected_role'] ?? 'parent';
 
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
-        $stmt->execute([$email, $password]);
+        // جلب المستخدم بالإيميل فقط
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($user) {
-            // تحقق أن الدور يطابق
+            // تحقق من كلمة المرور — plain text أو hashed
+            $passwordOk = ($password === $user['password']) || 
+                          password_verify($password, $user['password']);
+
             $db_role = $user['role'];
             $match = ($selected_role === 'parent'  && $db_role === 'parent') ||
                      ($selected_role === 'teacher' && $db_role === 'enseignant') ||
                      ($selected_role === 'admin'   && $db_role === 'admin');
 
-            if (!$match) {
-                $error = "❌ Incorrect  Informations (email/password)!";
-            } elseif (isset($user['status']) && $user['status'] === 'pending') {
-                $error = "⏳ Your account is pending admin approval.";
-            } elseif (isset($user['status']) && $user['status'] === 'rejected') {
-                $error = "❌ Your account has been rejected by the admin.";
+            if (!$passwordOk || !$match) {
+                $error = "❌ Incorrect Informations (email/password)!";
             } else {
                 $_SESSION['user'] = $user;
-                if ($user['role'] === 'admin')           header("Location: admin.php");
-                elseif ($user['role'] === 'parent')      header("Location: dashboard.php");
-                elseif ($user['role'] === 'enseignant')  header("Location: enseignant.php");
+                if ($user['role'] === 'admin')          header("Location: admin.php");
+                elseif ($user['role'] === 'parent')     header("Location: dashboard.php");
+                elseif ($user['role'] === 'enseignant') header("Location: enseignant.php");
                 exit;
             }
         } else {
-            $error = "Email ou mot de passe incorrect!";
+            $error = "❌ Incorrect Informations (email/password)!";
         }
     }
     
@@ -47,7 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'register') {
         $first_name = trim($_POST['first_name']);
         $last_name  = trim($_POST['last_name']);
-        $role       = $_POST['role'];
+        $role_raw   = $_POST['role'];
+        $role       = ($role_raw === 'teacher') ? 'enseignant' : $role_raw;
         $secret     = $_POST['secret'] ?? '';
         $child_name = trim($_POST['child_name'] ?? '');
         
@@ -60,22 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($check->fetch()) {
                 $error = "Cet email est déjà utilisé!";
             } else {
-                // admin و enseignant يدخلون مباشرة — parent ينتظر موافقة
-                $status = ($role === 'parent') ? 'pending' : 'active';
-
-                // تحقق إذا عمود status موجود
-                try {
-                    $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, password, role, status) VALUES (?, ?, ?, ?, ?, ?)");
-                    $stmt->execute([$first_name, $last_name, $email, $password, $role, $status]);
-                } catch (Exception $e) {
-                    // إذا عمود status غير موجود
-                    $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, password, role) VALUES (?, ?, ?, ?, ?)");
-                    $stmt->execute([$first_name, $last_name, $email, $password, $role]);
-                }
+                $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, email, password, role) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([$first_name, $last_name, $email, $password, $role]);
 
                 $new_id = $pdo->lastInsertId();
 
-                // حفظ اسم الولد إذا كان parent
                 if ($role === 'parent' && !empty($child_name)) {
                     try {
                         $pdo->prepare("INSERT INTO children (parent_id, child_name) VALUES (?, ?)")
@@ -83,11 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     } catch (Exception $e) {}
                 }
 
-                if ($role === 'parent') {
-                    $error = "⏳ Account created! Please wait for admin approval before logging in.";
-                } else {
-                    $error = "✅ Compte créé avec succès! Vous pouvez vous connecter.";
-                }
+                $error = "✅ Compte créé avec succès! Vous pouvez vous connecter.";
             }
         }
     }
@@ -138,17 +124,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="org">
         <nav>
-            <a href="HomePfe.html" class="logo"></a>
+            <a href="index.html" class="logo"></a>
             <div class="hamburger" id="hamburger"><i class="fa fa-bars"></i></div>
             <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
+                <li><a href="index.html">Home</a></li>
                 <li><a href="#">Student/Courses</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="login.php"><i class="fa fa-user"></i> Log In</a></li>
-                <li id="theme-toggle" style="cursor:pointer;display:flex;align-items:center;margin-left:15px;">
-                    <i class="fas fa-moon" id="theme-icon" style="color:#f5c842;font-size:1.2rem;"></i>
-                </li>
+                <li><a href="contact.php">Contact</a></li>
+                <li>
+                    <select id="language-select"onchange="changeLanguage(this.value)">
+                        <option value="">Language</option>
+                        <option value="">English</option>
+                        <option value="en">French</option>
+                        <option value="ar">Arabic</option>
+                    </select>
+                 </li> 
+                <li><a href="login.php"><i class="fa fa-user" style="color:#000;"></i> Log In</a></li>
+                <li id="theme-toggle" style="cursor:pointer;display:flex;align-items:center;margin-left:15px;"></li>
             </ul>
         </nav>
 
@@ -321,19 +312,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="footer-col">
                     <h4>Navigation</h4>
                     <ol>
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Student / Courses</a></li>
-                        <li><a href="#">Contact</a></li>
-                    </ol>
-                </div>
-                <div class="footer-col">
-                    <h4>Legal</h4>
-                    <ol>
-                        <li><a href="#">Who are we?</a></li>
-                        <li><a href="#">Affiliation / Contact</a></li>
-                        <li><a href="#">Terms of Use</a></li>
-                        <li><a href="#">Privacy &amp; Policy</a></li>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="courses.php">Student / Courses</a></li>
+                        <li><a href="#">Language</a></li>
+                        <li><a href="contact.php">Contact</a></li>
                     </ol>
                 </div>
             </div>
@@ -395,13 +377,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 icon.classList.add('fa-bars');
                 icon.classList.remove('fa-times');
             });
-        });
-
-        const themeToggle = document.getElementById('theme-toggle');
-        themeToggle.addEventListener('click', () => {
-            document.documentElement.style.filter =
-                document.documentElement.style.filter === 'invert(1) hue-rotate(180deg)'
-                ? '' : 'invert(1) hue-rotate(180deg)';
         });
     </script>
 </body>
