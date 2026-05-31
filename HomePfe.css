@@ -21,7 +21,7 @@ body{
 }
 
 .org{
-    background-image:url('heros.png');
+    background-image:url('pics/heros.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -240,7 +240,7 @@ span{
     border-radius: 50%;
     border: 2px solid #f5c842;
     margin-right: 50px;
-    background: url('Ecolna.jpg') center/cover,no-repeat;
+    background: url('pics/Ecolna.jpg') center/cover,no-repeat;
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
     transition: transform 0.3s ease;
 }
